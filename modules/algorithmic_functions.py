@@ -9,6 +9,9 @@ import yfinance as yf
 from pathlib import Path
 from pandas.tseries.offsets import DateOffset
 
+default_test_start_year = 2022
+default_test_start_month = 1
+default_test_start_day = 10
 
 
 
@@ -35,10 +38,15 @@ def add_indicators(df):
     MyStrategy = ta.Strategy(
     name="custom",
     ta=[
-        {"kind": "sma","length": 30},
+       {"kind": "sma","length": 30},
         {"kind": "sma","length": 100},
         {"kind": "macd"},
-        {"kind": "bbands", "length": 20,"std" : 2}
+        {"kind": "bbands", "length": 20,"std" : 2},
+        {"kind": "rsi"},
+        {"kind": "hlc3"},
+        {"kind": "ohlc4"},
+        {"kind": "linreg"},
+        {"kind": "stoch"}
         
     ]
 )
@@ -48,6 +56,53 @@ def add_indicators(df):
 
 
 # add signals to portfolio dataframe
+# def add_signals(df):
+#     # add columns for daily returns and use those to populate a column
+#     # indicating buy/sell/hold based on daily performance
+#     df.ta.log_return(cumulative=True, append=True)
+#     df.ta.log_return(cumulative=False, append=True)
+#     df.ta.percent_return(append=True, cumulative=True)
+#     df.ta.percent_return(append=True, cumulative=False)
+#     df['performance_signal'] = 0
+#     df['SMA_signal'] = 0
+#     df['MACD_signal'] = 0
+#     df['BB_signal'] = 0
+#     sma_position = 0
+#     macd_position = 0
+#     bb_position = 0
+#     for index, row in df.iterrows():
+#         if row['PCTRET_1'] > 0:
+#             df.loc[index,'performance_signal'] = 1
+#         elif row['PCTRET_1'] < 0:
+#             df.loc[index,'performance_signal'] = -1
+    
+#         # create signal column based upon SMA 
+#         if row['SMA_30'] > row['SMA_100'] and sma_position != 1:
+#             df.loc[index,'SMA_signal'] = 1
+#             sma_position = 1
+#         elif row['SMA_30'] < row['SMA_100'] and sma_position != -1:
+#             df.loc[index,'SMA_signal'] = -1
+#             sma_position = -1
+            
+#         # create signal column based upon MACD
+#         if row['MACD_12_26_9'] > row['MACDs_12_26_9'] and macd_position != 1:
+#             df.loc[index,'MACD_signal'] = 1
+#             macd_position = 1
+#         if row['MACD_12_26_9'] < row['MACDs_12_26_9'] and macd_position != -1:
+#             df.loc[index,'MACD_signal'] = -1
+#             macd_position = -1
+            
+#         # create signal column based upon Bollinger Bands
+#         if row['close'] <  row['BBL_20_2.0'] and bb_position != 1:
+#             df.loc[index,'BB_signal'] = 1
+#             bb_position = 1
+#         if row['close'] >  row['BBU_20_2.0'] and bb_position != -1:
+#             df.loc[index,'BB_signal'] = -1
+#             bb_position = -1
+    
+#     return df   
+
+
 def add_signals(df):
     # add columns for daily returns and use those to populate a column
     # indicating buy/sell/hold based on daily performance
@@ -59,43 +114,44 @@ def add_signals(df):
     df['SMA_signal'] = 0
     df['MACD_signal'] = 0
     df['BB_signal'] = 0
-    sma_position = 0
-    macd_position = 0
-    bb_position = 0
+
     for index, row in df.iterrows():
-        if row['PCTRET_1'] > 0:
+        if row['PCTRET_1'] >= 0:
             df.loc[index,'performance_signal'] = 1
-        elif row['PCTRET_1'] < 0:
-            df.loc[index,'performance_signal'] = -1
+        # elif row['PCTRET_1'] < 0:
+        #     df.loc[index,'performance_signal'] = -1
     
         # create signal column based upon SMA 
-        if row['SMA_30'] > row['SMA_100'] and sma_position != 1:
+        if row['SMA_30'] >= row['SMA_100']:
             df.loc[index,'SMA_signal'] = 1
-            sma_position = 1
-        elif row['SMA_30'] < row['SMA_100'] and sma_position != -1:
-            df.loc[index,'SMA_signal'] = -1
-            sma_position = -1
+        
+        # elif row['SMA_30'] < row['SMA_100'] and sma_position != -1:
+        #     df.loc[index,'SMA_signal'] = -1
+        #     sma_position = -1
             
         # create signal column based upon MACD
-        if row['MACD_12_26_9'] > row['MACDs_12_26_9'] and macd_position != 1:
+        if row['MACD_12_26_9'] >= row['MACDs_12_26_9']:
             df.loc[index,'MACD_signal'] = 1
-            macd_position = 1
-        if row['MACD_12_26_9'] < row['MACDs_12_26_9'] and macd_position != -1:
-            df.loc[index,'MACD_signal'] = -1
-            macd_position = -1
+       
+        # if row['MACD_12_26_9'] < row['MACDs_12_26_9'] and macd_position != -1:
+        #     df.loc[index,'MACD_signal'] = -1
+        #     macd_position = -1
             
         # create signal column based upon Bollinger Bands
-        if row['close'] <  row['BBL_20_2.0'] and bb_position != 1:
+        if row['close'] <=  row['BBL_20_2.0']:
             df.loc[index,'BB_signal'] = 1
-            bb_position = 1
-        if row['close'] >  row['BBU_20_2.0'] and bb_position != -1:
-            df.loc[index,'BB_signal'] = -1
-            bb_position = -1
+     
+        # if row['close'] >  row['BBU_20_2.0'] and bb_position != -1:
+        #     df.loc[index,'BB_signal'] = -1
+        #     bb_position = -1
     
-    return df   
+    return df 
 
 # build data to feed to ML model for daily predictions
-def build_ml_prediction_data(name, year, month, day):
+def build_ml_prediction_data(name, 
+                             year=default_test_start_year,
+                             month=default_test_start_month,
+                             day=default_test_start_day):
     df = get_portfolio_summary(name, year - 1, month, day)
     df.ta.log_return(cumulative=True, append=True)
     df.ta.log_return(cumulative=False, append=True)
@@ -105,10 +161,10 @@ def build_ml_prediction_data(name, year, month, day):
     df = df.dropna()
     df['performance_signal'] = 0
     for index, row in df.iterrows():
-        if row['PCTRET_1'] > 0:
+        if row['PCTRET_1'] >= 0:
             df.loc[index,'performance_signal'] = 1
-        elif row['PCTRET_1'] < 0:
-            df.loc[index,'performance_signal'] = -1
+        # elif row['PCTRET_1'] < 0:
+        #     df.loc[index,'performance_signal'] = -1
     df = df.drop(['open', 'high', 'low', 'close', 'adjclose', 'volume','CUMLOGRET_1','LOGRET_1', 'CUMPCTRET_1', 'PCTRET_1'], axis=1)
     start = str(datetime.datetime(year, month, day).date())
     return df.loc[start:,]
@@ -124,40 +180,78 @@ def build_portfolio_signal_ml_df(name, start_year, start_month, start_day):
                        'BB_signal', 'CUMLOGRET_1','LOGRET_1', 'CUMPCTRET_1', 'PCTRET_1'], axis=1)
     return signals, ml.dropna()
 
-def create_train_test(ml_df):
-    X = ml_df.drop('performance_signal', axis=1).copy()
-    cats = X.columns
-    X = X[cats].shift().dropna()
-
-    y = ml_df['performance_signal'].copy()
+def create_train_test(portfolios=['conservative', 'balanced','growth',
+                                  'aggressive', 'alternative']):
     
-    training_begin = X.index.min()
-    training_end = X.index.min() + DateOffset(months=36)
-
-
-    X_train = X.loc[training_begin:training_end]
-    X_test = X.loc[training_end:]
-    y_train = y.loc[training_begin:training_end]
-    y_test = y.loc[training_end:]
-
-    # create X train/test datasets using various combinations of indicators
-    X_train_sma = X_train[['SMA_30', 'SMA_100']]
-    X_test_sma = X_test[['SMA_30', 'SMA_100']]
-    X_train_macd = X_train[['MACD_12_26_9', 'MACDh_12_26_9','MACDs_12_26_9']]
-    X_test_macd = X_test[['MACD_12_26_9', 'MACDh_12_26_9','MACDs_12_26_9']]
-    X_train_bb = X_train[['BBL_20_2.0','BBM_20_2.0','BBU_20_2.0','BBB_20_2.0','BBP_20_2.0']]
-    X_test_bb = X_test[['BBL_20_2.0','BBM_20_2.0','BBU_20_2.0','BBB_20_2.0','BBP_20_2.0']]
+    # loop through portfolios and create datasets
     
-    # save X train/test datasets
-    X_train.to_csv(Path("./data/X_train_full.csv"))
-    X_test.to_csv(Path("./data/X_test_full.csv"))
-    X_train_sma.to_csv(Path("./data/X_train_sma.csv"))
-    X_test_sma.to_csv(Path("./data/X_test_sma.csv"))
-    X_train_macd.to_csv(Path("./data/X_train_macd.csv"))
-    X_test_macd.to_csv(Path("./data/X_test_macd.csv"))
-    X_train_bb.to_csv(Path("./data/X_train_bb.csv"))
-    X_test_bb.to_csv(Path("./data/X_test_bb.csv"))
+    for port in portfolios:
+        signals_df, ml_df = build_portfolio_signal_ml_df(f'{port}',2017,12,31)
+
+        X = ml_df.drop('performance_signal', axis=1).copy()
+        cats = X.columns
+        X = X[cats].shift().dropna()
+
+        y = ml_df['performance_signal'].copy()
+
+        training_begin = X.index.min()
+        training_end = X.index.min() + DateOffset(months=36)
+
+
+        X_train = X.loc[training_begin:training_end]
+        X_test = X.loc[training_end:]
+        y_train = y.loc[training_begin:training_end]
+        y_test = y.loc[training_end:]
+
+
+        # # save X_train/test datasets
+        X_train.to_csv(Path(f"./data/X_train_full_{port}.csv"))
+        X_test.to_csv(Path(f"./data/X_test_full_{port}.csv"))
+
+
+        # save y train/test datasets
+        y_train.to_csv(Path(f"./data/y_train_{port}.csv"))
+        y_test.to_csv(Path(f"./data/y_test_{port}.csv"))
+
+
+# create dataframe to use for graphing portfoliio activity over time based upon a
+# specified trading signal
+def create_portfolio_performance_data(df, signal, initial_capital, share_size):
     
-    # save y train/test datasets
-    y_train.to_csv(Path("./data/y_train.csv"))
-    y_test.to_csv(Path("./data/y_test.csv"))
+ 
+    df['Position'] = share_size * df[signal]
+
+
+    # Determine the points in time where shares are bought or sold
+    df['Entry/Exit Position'] = df['Position'].diff()
+    if df.loc[df.index[0],'Position'] == 500:
+        df.loc[df.index[0],'Entry/Exit Position'] = 500
+    else:
+        df.loc[df.index[0],'Entry/Exit Position'] = 0
+
+    # Multiply the close price by the number of shares held, or the Position
+    df['Portfolio Holdings'] = df['close'] * df['Position']
+
+    # Subtract the amount of either the cost or proceeds of the trade from the initial capital invested
+    df['Portfolio Cash'] = initial_capital - (df['close'] * df['Entry/Exit Position']).cumsum()
+
+    # Calculate the total portfolio value by adding the portfolio cash to the portfolio holdings (or investments)
+    df['Portfolio Total'] = df['Portfolio Cash'] + df['Portfolio Holdings']
+
+    # Calculate the portfolio daily returns
+    df['Portfolio Daily Returns'] = df['Portfolio Total'].pct_change()
+
+    # Calculate the portfolio cumulative returns
+    df['Portfolio Cumulative Returns'] = (1 + df['Portfolio Daily Returns']).cumprod() - 1
+
+    # return dataframe
+    return df
+
+# convert ML model predictions to dataframe to be used for portfolio performance review
+def prep_ml_prediction_signals(predictions, test_data, port_class):
+    preds_df = pd.DataFrame(index=test_data.index)
+    preds_df['model_signal'] = predictions
+    signals, _ = af.build_portfolio_signal_ml_df(port_class, 2017,12,31)
+    signals = signals.loc[preds_df.index[0]:]
+    signals = pd.concat([signals, preds_df], axis=1)
+    return signals
