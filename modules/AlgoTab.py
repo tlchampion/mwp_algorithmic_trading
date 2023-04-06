@@ -48,4 +48,5 @@ def get_strategy_options(risk):
     
     
     
-"MACD is designed to reveal changes in the strength, direction, momentum, and duration of a trend in a stock's price. It is a collection of three time series that are calculated from a stock's historical closing price based upon Exponential Moving Averages. Our MACD calculations are based upon the standard 12/26/9 day periods."
+def get_strategies_info(strategy):
+    return strategies_info[strategy][0], strategies_info[strategy][1]

@@ -12,7 +12,7 @@ from pandas.tseries.offsets import DateOffset
 default_test_start_year = 2022
 default_test_start_month = 1
 default_test_start_day = 10
-
+default_test_start_date = datetime.datetime.strptime('2022-1-10', '%Y-%m-%d')
 
 
 
