@@ -35,7 +35,7 @@ def create_performance_data():
         strategies = strategies_list[c]
         for s in strategies:
             ind = s.upper() + '_signal'
-            performance = af.create_portfolio_performance_data(df, ind, 100000, 500)
+            performance = af.create_portfolio_performance_data(df, ind)
             performance = performance[['close', ind, 'Position', 'Entry/Exit Position', 'Portfolio Holdings', 'Portfolio Cash',
                                       'Portfolio Total', 'Portfolio Daily Returns', 'Portfolio Cumulative Returns']].loc[start_date:,]
             performance.reset_index(inplace=True)
