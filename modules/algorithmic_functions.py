@@ -14,7 +14,8 @@ default_test_start_month = 1
 default_test_start_day = 10
 default_test_start_date = datetime.datetime.strptime('2022-1-10', '%Y-%m-%d')
 
-
+default_initial_investment = 100000
+default_share_size = 500
 
 
 # create function to pull combined price information for a single risk-level portfolio
@@ -231,7 +232,7 @@ def create_train_test(portfolios=['conservative', 'balanced','growth',
 
 # create dataframe to use for graphing portfoliio activity over time based upon a
 # specified trading signal
-def create_portfolio_performance_data(df, signal, initial_capital, share_size):
+def create_portfolio_performance_data(df, signal, initial_capital=default_initial_investment, share_size=default_share_size):
     
  
     df['Position'] = share_size * df[signal]

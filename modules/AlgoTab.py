@@ -1,3 +1,14 @@
+import pandas as pd
+from matplotlib.figure import Figure
+from matplotlib import cm
+from pathlib import Path
+# import os
+# import sys
+# module_path = os.path.abspath(os.path.join('..'))
+# if module_path not in sys.path:
+#     sys.path.append(module_path)
+import modules.algorithmic_functions as af
+
 """
 The contents of this file define what is displayed on the 'Algorithmic Trading' tab
 """
@@ -50,3 +61,35 @@ def get_strategy_options(risk):
     
 def get_strategies_info(strategy):
     return strategies_info[strategy][0], strategies_info[strategy][1]
+
+def get_performance_data(portfolio_class, strategy, initial_investment=af.default_initial_investment, share_size=af.default_share_size):
+    file = f"performance_data_{strategy}_{portfolio_class}.csv"
+    df = pd.read_csv(Path(f"./data/performance/{file}"),
+                 index_col='index', parse_dates=True, infer_datetime_format=True)
+    
+    figure = make_performance_graph(portfolio_class, df)
+    roi = calculate_roi(df)
+    
+    return figure, roi
+
+# creat graph showing total portfolio value over time
+def make_performance_graph(portfolio_class,df):
+
+    
+    text = f"{portfolio_class.title()} Portfolio"
+    title = f"{portfolio_class.title()} Value over Time"
+    fig0 = Figure(figsize=(16,8))
+    ax = fig0.subplots()
+    chart = ax.plot(df['Portfolio Total'])
+
+    ax.set_title(title)
+    ax.legend([text])
+
+    return fig0
+    
+
+# calculate ROI for portfolio
+def calculate_roi(data, initial_investment=af.default_initial_investment, share_size=af.default_share_size):
+     return (data.iloc[-1,:]['Portfolio Total'] - initial_investment) / initial_investment * 100
+    
+    
