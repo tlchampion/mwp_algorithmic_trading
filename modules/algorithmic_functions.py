@@ -114,6 +114,7 @@ def add_signals(df):
     df['SMA_signal'] = 0
     df['MACD_signal'] = 0
     df['BB_signal'] = 0
+    df['RSI_signal'] = 0
 
     for index, row in df.iterrows():
         if row['PCTRET_1'] >= 0:
@@ -138,12 +139,26 @@ def add_signals(df):
         #     macd_position = -1
             
         # create signal column based upon Bollinger Bands
-        if row['close'] <=  row['BBL_20_2.0']:
+        bb_position = 0
+        if row['close'] <=  row['BBL_20_2.0'] and bb_position != 1:
             df.loc[index,'BB_signal'] = 1
-     
-        # if row['close'] >  row['BBU_20_2.0'] and bb_position != -1:
-        #     df.loc[index,'BB_signal'] = -1
-        #     bb_position = -1
+            bb_position = 1
+        elif row['close'] >  row['BBU_20_2.0'] and bb_position != 0:
+            df.loc[index,'BB_signal'] = 0
+            bb_position = 0
+        else: 
+            df.loc[index,'BB_signal'] = bb_position
+        
+        # generate RSI signal column
+        rsi_position = 0
+        if row['RSI_14'] <= 30 and rsi_position != 1:
+            df.loc[index,'RSI_signal'] = 1
+            rsi_position = 1
+        elif row['RSI_14'] >=  70 and rsi_position != 0:
+            df.loc[index,'RSI_signal'] = 0
+            rsi_position = 0
+        else: 
+            df.loc[index,'RSI_signal'] = rsi_position        
     
     return df 
 
