@@ -62,13 +62,14 @@ def get_strategy_options(risk):
 def get_strategies_info(strategy):
     return strategies_info[strategy][0], strategies_info[strategy][1]
 
-def get_performance_data(portfolio_class, strategy, initial_investment=af.default_initial_investment, share_size=af.default_share_size):
+def get_performance_data(portfolio_class, strategy):
     file = f"performance_data_{strategy}_{portfolio_class}.csv"
     df = pd.read_csv(Path(f"./data/performance/{file}"),
                  index_col='index', parse_dates=True, infer_datetime_format=True)
     
+    
     figure = make_performance_graph(portfolio_class, df)
-    roi = calculate_roi(df)
+    roi = calculate_roi(df, portfolio_class)
     compare = make_comparison_graph(portfolio_class, df)
     
     return figure, roi, compare
@@ -108,7 +109,9 @@ def make_comparison_graph(portfolio_class, df):
 
 
 # calculate ROI for portfolio
-def calculate_roi(data, initial_investment=af.default_initial_investment, share_size=af.default_share_size):
-     return (data.iloc[-1,:]['Portfolio Total'] - initial_investment) / initial_investment * 100
+def calculate_roi(data, portfolio_class):
+    initial_investment = af.default_initial_investment
+    roi = (data.iloc[-1,:]['Portfolio Total'] - initial_investment) / initial_investment * 100
+    return roi
     
     
