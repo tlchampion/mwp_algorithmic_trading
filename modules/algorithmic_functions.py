@@ -14,8 +14,12 @@ default_test_start_month = 1
 default_test_start_day = 10
 default_test_start_date = datetime.datetime.strptime('2022-1-10', '%Y-%m-%d')
 
-default_initial_investment = 100000
-default_share_size = 500
+default_initial_investment = 150000
+default_share_size = {'conservative': 650,
+                      'balanced': 200,
+                      'growth': 400,
+                      'aggressive': 350,
+                      'alternative': 400}
 
 
 # create function to pull combined price information for a single risk-level portfolio
@@ -116,6 +120,7 @@ def add_signals(df):
     df['MACD_signal'] = 0
     df['BB_signal'] = 0
     df['RSI_signal'] = 0
+    df['STOCH_signal'] = 0
 
     for index, row in df.iterrows():
         if row['PCTRET_1'] >= 0:
@@ -159,7 +164,19 @@ def add_signals(df):
             df.loc[index,'RSI_signal'] = 0
             rsi_position = 0
         else: 
-            df.loc[index,'RSI_signal'] = rsi_position        
+            df.loc[index,'RSI_signal'] = rsi_position 
+            
+        # generate STOCH signal
+        stoch_position = 0
+        if row['STOCHk_14_3_3'] < 20 and stoch_position != 1:
+            df.loc[index, 'STOCH_signal'] = 1
+            stoch_position = 1
+        elif row['STOCHk_14_3_3'] > 80 and stoch_position != 0:
+            df.loc[index, 'STOCH_signal'] = 0
+            stoch_position = 0
+        else:
+            df.loc[index, 'STOCH_signal'] = stoch_position
+            
     
     return df 
 
@@ -232,18 +249,15 @@ def create_train_test(portfolios=['conservative', 'balanced','growth',
 
 # create dataframe to use for graphing portfoliio activity over time based upon a
 # specified trading signal
-def create_portfolio_performance_data(df, signal, initial_capital=default_initial_investment, share_size=default_share_size):
+def create_portfolio_performance_data(df, signal, initial_capital=default_initial_investment, share_size=500):
     
  
-    df['Position'] = share_size * df[signal]
+    df['Position'] = (share_size * df[signal]) + share_size
 
 
     # Determine the points in time where shares are bought or sold
     df['Entry/Exit Position'] = df['Position'].diff()
-    if df.loc[df.index[0],'Position'] == 500:
-        df.loc[df.index[0],'Entry/Exit Position'] = 500
-    else:
-        df.loc[df.index[0],'Entry/Exit Position'] = 0
+    df.loc[df.index[0],'Entry/Exit Position'] = df.loc[df.index[0],'Position']
 
     # Multiply the close price by the number of shares held, or the Position
     df['Portfolio Holdings'] = df['close'] * df['Position']
