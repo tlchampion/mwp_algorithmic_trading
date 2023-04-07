@@ -43,7 +43,17 @@ def create_performance_data():
             file_path = Path(f"../data/performance/{file_name}")
             performance.to_csv(file_path, index=False)
    
-        
+
+def create_market_data():
+    market = helpers.get_stocks(['^GSPC'])
+    market = market['^GSPC']
+    market['market_daily_returns'] = market['close'].pct_change()
+    market.dropna(inplace=True)
+    market['market_cum_returns'] = (1 + market['market_daily_returns']).cumprod() - 1
+    market = market.loc[af.default_test_start_date:,]
+    market.reset_index(inplace = True)
+    market.to_csv(Path("../data/at_market_data.csv"), index=False)
+
   
 if __name__ == "__main__":
     create_performance_data()
