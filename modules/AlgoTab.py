@@ -69,8 +69,9 @@ def get_performance_data(portfolio_class, strategy, initial_investment=af.defaul
     
     figure = make_performance_graph(portfolio_class, df)
     roi = calculate_roi(df)
+    compare = make_comparison_graph(portfolio_class, df)
     
-    return figure, roi
+    return figure, roi, compare
 
 # creat graph showing total portfolio value over time
 def make_performance_graph(portfolio_class,df):
@@ -86,7 +87,25 @@ def make_performance_graph(portfolio_class,df):
     ax.legend([text])
 
     return fig0
+
+
+def make_comparison_graph(portfolio_class, df):
+    market_data = pd.read_csv(Path(f"./data/at_market_data.csv"),
+                 index_col='index', parse_dates=True, infer_datetime_format=True)
+    text = f"{portfolio_class.capitalize()} Portfolio"
+    title = f"{portfolio_class.capitalize()} Portfolio Cumulative Returns vs S&P 500"
+    fig0 = Figure(figsize=(16,8))
+    ax = fig0.subplots()
+    #ax = port_cum_returns.plot(figsize=(10,5), title="Cumulative Returns of Conservative Portfolio vs S&P 500")
+    #gmarket_cum_returns.plot(ax=ax)
+    chart = ax.plot(df['Portfolio Cumulative Returns'])
+    ax.plot(market_data['market_cum_returns'])
+    ax.set_title(title)
+    ax.legend([text,
+         'S&P'])
     
+    return fig0
+
 
 # calculate ROI for portfolio
 def calculate_roi(data, initial_investment=af.default_initial_investment, share_size=af.default_share_size):
