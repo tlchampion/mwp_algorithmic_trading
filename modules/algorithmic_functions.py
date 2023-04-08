@@ -23,7 +23,7 @@ default_share_size = {'conservative': 650,
 
 
 # create function to pull combined price information for a single risk-level portfolio
-def get_portfolio_summary(name, start_year, start_month, start_day):
+def get_portfolio_summary(name, start_year=2017, start_month=12, start_day=31):
     tickers = helpers.get_ticker_by_port_name(name)
     stocks = helpers.get_stocks(tickers, start_year, start_month, start_day)
     weights = helpers.get_weights_by_name(name)
@@ -45,6 +45,8 @@ def add_indicators(df):
     ta=[
        {"kind": "sma","length": 30},
         {"kind": "sma","length": 100},
+        {"kind": "sma", "length": 200},
+        {"kind": "ema", "length": 50},
         {"kind": "macd"},
         {"kind": "bbands", "length": 20,"std" : 2},
         {"kind": "rsi"},
@@ -57,55 +59,7 @@ def add_indicators(df):
 )
     df.ta.strategy(MyStrategy)
     return df
-
-
-
-# add signals to portfolio dataframe
-# def add_signals(df):
-#     # add columns for daily returns and use those to populate a column
-#     # indicating buy/sell/hold based on daily performance
-#     df.ta.log_return(cumulative=True, append=True)
-#     df.ta.log_return(cumulative=False, append=True)
-#     df.ta.percent_return(append=True, cumulative=True)
-#     df.ta.percent_return(append=True, cumulative=False)
-#     df['performance_signal'] = 0
-#     df['SMA_signal'] = 0
-#     df['MACD_signal'] = 0
-#     df['BB_signal'] = 0
-#     sma_position = 0
-#     macd_position = 0
-#     bb_position = 0
-#     for index, row in df.iterrows():
-#         if row['PCTRET_1'] > 0:
-#             df.loc[index,'performance_signal'] = 1
-#         elif row['PCTRET_1'] < 0:
-#             df.loc[index,'performance_signal'] = -1
-    
-#         # create signal column based upon SMA 
-#         if row['SMA_30'] > row['SMA_100'] and sma_position != 1:
-#             df.loc[index,'SMA_signal'] = 1
-#             sma_position = 1
-#         elif row['SMA_30'] < row['SMA_100'] and sma_position != -1:
-#             df.loc[index,'SMA_signal'] = -1
-#             sma_position = -1
-            
-#         # create signal column based upon MACD
-#         if row['MACD_12_26_9'] > row['MACDs_12_26_9'] and macd_position != 1:
-#             df.loc[index,'MACD_signal'] = 1
-#             macd_position = 1
-#         if row['MACD_12_26_9'] < row['MACDs_12_26_9'] and macd_position != -1:
-#             df.loc[index,'MACD_signal'] = -1
-#             macd_position = -1
-            
-#         # create signal column based upon Bollinger Bands
-#         if row['close'] <  row['BBL_20_2.0'] and bb_position != 1:
-#             df.loc[index,'BB_signal'] = 1
-#             bb_position = 1
-#         if row['close'] >  row['BBU_20_2.0'] and bb_position != -1:
-#             df.loc[index,'BB_signal'] = -1
-#             bb_position = -1
-    
-#     return df   
+  
 
 
 def add_signals(df):
@@ -181,11 +135,11 @@ def add_signals(df):
     return df 
 
 # build data to feed to ML model for daily predictions
-def build_ml_prediction_data(name, 
+def build_ml_prediction_data(portfolio_class, 
                              year=default_test_start_year,
                              month=default_test_start_month,
                              day=default_test_start_day):
-    df = get_portfolio_summary(name, year - 1, month, day)
+    df = get_portfolio_summary(portfolio_class, year - 1, month, day)
     df.ta.log_return(cumulative=True, append=True)
     df.ta.log_return(cumulative=False, append=True)
     df.ta.percent_return(append=True, cumulative=True)
@@ -210,41 +164,42 @@ def build_portfolio_signal_ml_df(name, start_year, start_month, start_day):
     signals = add_signals(indicators)
     signals = signals.dropna()
     ml = signals.drop(['open', 'high', 'low', 'close', 'adjclose', 'volume', 'SMA_signal', 'MACD_signal',
-                       'BB_signal', 'CUMLOGRET_1','LOGRET_1', 'CUMPCTRET_1', 'PCTRET_1'], axis=1)
+                       'BB_signal', 'RSI_signal', 'STOCH_signal','CUMLOGRET_1','LOGRET_1', 'CUMPCTRET_1', 'PCTRET_1'], axis=1)
     return signals, ml.dropna()
 
-def create_train_test(portfolios=['conservative', 'balanced','growth',
-                                  'aggressive', 'alternative']):
+# def create_train_test():
     
-    # loop through portfolios and create datasets
+#     portfolios=['conservative', 'balanced','growth',
+#                                   'aggressive', 'alternative']
+#     # loop through portfolios and create datasets
     
-    for port in portfolios:
-        signals_df, ml_df = build_portfolio_signal_ml_df(f'{port}',2017,12,31)
+#     for port in portfolios:
+#         signals_df, ml_df = build_portfolio_signal_ml_df(f'{port}',2017,12,31)
 
-        X = ml_df.drop('performance_signal', axis=1).copy()
-        cats = X.columns
-        X = X[cats].shift().dropna()
+#         X = ml_df.drop('performance_signal', axis=1).copy()
+#         cats = X.columns
+#         X = X[cats].shift().dropna()
 
-        y = ml_df['performance_signal'].copy()
+#         y = ml_df['performance_signal'].copy()
 
-        training_begin = X.index.min()
-        training_end = X.index.min() + DateOffset(months=36)
-
-
-        X_train = X.loc[training_begin:training_end]
-        X_test = X.loc[training_end:]
-        y_train = y.loc[training_begin:training_end]
-        y_test = y.loc[training_end:]
+#         training_begin = X.index.min()
+#         training_end = X.index.min() + DateOffset(months=36)
 
 
-        # # save X_train/test datasets
-        X_train.to_csv(Path(f"./data/X_train_full_{port}.csv"))
-        X_test.to_csv(Path(f"./data/X_test_full_{port}.csv"))
+#         X_train = X.loc[training_begin:training_end]
+#         X_test = X.loc[training_end:]
+#         y_train = y.loc[training_begin:training_end]
+#         y_test = y.loc[training_end:]
 
 
-        # save y train/test datasets
-        y_train.to_csv(Path(f"./data/y_train_{port}.csv"))
-        y_test.to_csv(Path(f"./data/y_test_{port}.csv"))
+#         # # save X_train/test datasets
+#         X_train.to_csv(Path(f"./data/X_train_full_{port}.csv"))
+#         X_test.to_csv(Path(f"./data/X_test_full_{port}.csv"))
+
+
+#         # save y train/test datasets
+#         y_train.to_csv(Path(f"./data/y_train_{port}.csv"))
+#         y_test.to_csv(Path(f"./data/y_test_{port}.csv"))
 
 
 # create dataframe to use for graphing portfoliio activity over time based upon a
