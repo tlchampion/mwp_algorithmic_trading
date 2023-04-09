@@ -228,6 +228,12 @@ def create_portfolio_performance_data(df, signal, initial_capital=default_initia
 
     # Calculate the portfolio cumulative returns
     df['Portfolio Cumulative Returns'] = (1 + df['Portfolio Daily Returns']).cumprod() - 1
+    
+    # Calculate the daily returns for non-strategy trading
+    df['Base Daily Returns'] = df['close'].pct_change()
+    
+    # Calculate the cumulative returns for non-strategy trading
+    df['Base Cumulative Returns'] = (1 + df['Base Daily Returns']).cumprod() - 1
 
     # return dataframe
     return df
