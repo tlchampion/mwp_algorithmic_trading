@@ -69,7 +69,7 @@ def create_performance_data():
         performance = af.create_portfolio_performance_data(df_ml, 'model_signal', share_size=share_size)
 
         performance = performance[['close', 'model_signal', 'Position', 'Entry/Exit Position', 'Portfolio Holdings', 'Portfolio Cash',
-                                  'Portfolio Total', 'Portfolio Daily Returns', 'Portfolio Cumulative Returns']].loc[start_date:,]
+                                  'Portfolio Total', 'Portfolio Daily Returns', 'Portfolio Cumulative Returns', 'Base Daily Returns', 'Base Cumulative Returns']].loc[start_date:,]
         performance = performance.loc[af.default_test_start_date:,]
         performance.reset_index(inplace=True)
 
