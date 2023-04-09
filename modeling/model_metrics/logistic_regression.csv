@@ -1,0 +1,11 @@
+type,level_1,model8
+aggressive,f1_score,0.5895691609977324
+aggressive,roc_auc_score,0.48627554152416036
+alternative,f1_score,0.6361904761904762
+alternative,roc_auc_score,0.4713379520009355
+balanced,f1_score,0.624561403508772
+balanced,roc_auc_score,0.4968519517898903
+conservative,f1_score,0.5833333333333334
+conservative,roc_auc_score,0.4586486486486487
+growth,f1_score,0.6063157894736843
+growth,roc_auc_score,0.4896372299687217
