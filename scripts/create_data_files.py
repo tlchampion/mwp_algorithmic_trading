@@ -33,7 +33,8 @@ def create_performance_data():
         start_date = af.default_test_start_date
         df, ml = af.build_portfolio_signal_ml_df(c, 2017, 12, 31)
         share_size = af.default_share_size[c]
-        
+        df_ml = df.copy()
+        df = df.loc[af.default_test_start_date:,]
         # create performance dataframes for each strategy defined for the portfolio class
         strategies = strategies_list[c]
         for s in strategies:
@@ -41,7 +42,7 @@ def create_performance_data():
             
             performance = af.create_portfolio_performance_data(df, ind, share_size=share_size)
             performance = performance[['close', ind, 'Position', 'Entry/Exit Position', 'Portfolio Holdings', 'Portfolio Cash',
-                                      'Portfolio Total', 'Portfolio Daily Returns', 'Portfolio Cumulative Returns']].loc[start_date:,]
+                                      'Portfolio Total', 'Portfolio Daily Returns', 'Portfolio Cumulative Returns', 'Base Daily Returns', 'Base Cumulative Returns']].loc[start_date:,]
             performance = performance.loc[start_date:,]
             performance.reset_index(inplace=True)
             file_name = f"performance_data_{s}_{c}.csv"
@@ -49,7 +50,7 @@ def create_performance_data():
             performance.to_csv(file_path, index=False)
             
         # create performance dataframes for each strategy for the select ML model
-        df2 = df.copy()
+       
         # import model
         filepath = Path(f"../modeling/saved_models/{c}.joblib")
         model = load(filepath) 
@@ -62,10 +63,10 @@ def create_performance_data():
 
 
 
-        df2 = df2.loc[preds_df.index[0]:]
-        df2 = pd.concat([df2, preds_df], axis=1)
+        df_ml = df_ml.loc[preds_df.index[0]:]
+        df_ml = pd.concat([df_ml, preds_df], axis=1)
 
-        performance = af.create_portfolio_performance_data(df2, 'model_signal', share_size=share_size)
+        performance = af.create_portfolio_performance_data(df_ml, 'model_signal', share_size=share_size)
 
         performance = performance[['close', 'model_signal', 'Position', 'Entry/Exit Position', 'Portfolio Holdings', 'Portfolio Cash',
                                   'Portfolio Total', 'Portfolio Daily Returns', 'Portfolio Cumulative Returns']].loc[start_date:,]
