@@ -75,7 +75,7 @@ def get_performance_data(portfolio_class, strategy):
     
     
     figure = make_performance_graph(portfolio_class, df)
-    roi = calculate_roi(df, portfolio_class)
+    roi = calculate_roi(df)
     compare = make_comparison_graph(portfolio_class, df)
     
     return figure, roi, compare
@@ -119,9 +119,13 @@ def make_comparison_graph(portfolio_class, df):
 
 
 # calculate ROI for portfolio
-def calculate_roi(data, portfolio_class):
-    initial_investment = af.default_initial_investment
-    roi = (data.iloc[-1,:]['Portfolio Total'] - initial_investment) / initial_investment * 100
-    return roi
+def calculate_roi(df): 
+    market_data = pd.read_csv(Path(f"./data/at_market_data.csv"),
+                 index_col='index', parse_dates=True, infer_datetime_format=True)
+    # roi_strategy = (data.iloc[-1,:]['Portfolio Total'] - initial_investment) / initial_investment * 100
+    roi_strategy = df.iloc[-1,]['Portfolio Cumulative Returns'] * 100
+    roi_nostrategy = df.iloc[-1,]['Base Cumulative Returns'] * 100
+    roi_market = market_data.iloc[-1,]['market_cum_returns'] * 100
+    return [roi_strategy, roi_nostrategy, roi_market]
     
     
