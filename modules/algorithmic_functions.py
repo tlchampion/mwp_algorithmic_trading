@@ -81,14 +81,15 @@ def add_signals(df):
             df.loc[index,'performance_signal'] = 1
         # elif row['PCTRET_1'] < 0:
         #     df.loc[index,'performance_signal'] = -1
-    
-        # create signal column based upon SMA 
-        if row['SMA_30'] >= row['SMA_100']:
-            df.loc[index,'SMA_signal'] = 1
         
-        # elif row['SMA_30'] < row['SMA_100'] and sma_position != -1:
-        #     df.loc[index,'SMA_signal'] = -1
-        #     sma_position = -1
+        sma_position = 0
+        # create signal column based upon SMA 
+        if row['SMA_30'] >= row['SMA_100'] and sma_position != 1:
+            df.loc[index,'SMA_signal'] = 1
+            sma_position = 1
+        elif row['SMA_30'] < row['SMA_100'] and sma_position != 0:
+            df.loc[index,'SMA_signal'] = 0
+            sma_position = 0
             
         # create signal column based upon MACD
         if row['MACD_12_26_9'] >= row['MACDs_12_26_9']:
