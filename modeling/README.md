@@ -25,92 +25,95 @@ As the initial step in the building of all models a ```StandardScaler``` was ins
 
 Each model class had a minimum of 10-plus models built using different parameters. Please see below for a chart depicting the parameters used for each model:
 
-| **Bagging Classifier**                                                                                                                                                  |
-|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| model1 = BaggingClassifier(base_estimator=base_classifier, n_estimators=200, max_samples=0.8, max_features=0.5, bootstrap=True, oob_score=True, random_state=42)    |
-| model2 = BaggingClassifier(base_estimator=base_classifier, n_estimators=50, max_samples=0.8, max_features=0.5, bootstrap=True, oob_score=True, random_state=42)     |
-| model3 = BaggingClassifier(base_estimator=base_classifier, n_estimators=100, max_samples=0.8, max_features=0.5, bootstrap=True, oob_score=True, random_state=42)    |
-| model4 = BaggingClassifier(base_estimator=base_classifier, n_estimators=100, max_samples=0.9, max_features=0.5, bootstrap=True, oob_score=True, random_state=42)    |
-| model5 = BaggingClassifier(base_estimator=base_classifier, n_estimators=100, max_samples=0.5, max_features=0.5, bootstrap=True, oob_score=True, random_state=42)    |
-| model6 = BaggingClassifier(base_estimator=base_classifier, n_estimators=100, max_samples=0.8, max_features=0.7, bootstrap=True, oob_score=True, random_state=42)    |
-| model7 = BaggingClassifier(base_estimator=base_classifier, n_estimators=100, max_samples=0.8, max_features=0.3, bootstrap=True, oob_score=True, random_state=42)    |
-| model8 = BaggingClassifier(base_estimator=base_classifier, n_estimators=100, max_samples=0.8, max_features=0.5, bootstrap=False, oob_score=False, random_state=42)  |
-| model9 = BaggingClassifier(base_estimator=base_classifier, n_estimators=100, max_samples=0.8, max_features=0.5, bootstrap=True, oob_score=True, random_state=123)   |
-| model10 = BaggingClassifier(base_estimator=base_classifier, n_estimators=100, max_samples=0.8, max_features=0.5, bootstrap=True, oob_score=False, random_state=123) |
-| model11 = BaggingClassifier(base_estimator=base_classifier, n_estimators=100, max_samples=0.8, max_features=0.5, bootstrap=True, oob_score=False, random_state=42)  |
-
+|  **Bagging Classifier**                                                                                                                                              | 
+| Model|  Base Estimator |  m_estimators |  max_samples |  max_features |  bootstrap |  oob_score |  random_state
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------| 
+| model1| base_classifier | 200 | 0.8 | 0.5 | True | True | 42 |
+| model2| base_classifier | 50 | 0.8 | 0.5 | True | True | 42 |
+| model3| base_classifier | 100 | 0.8 | 0.5 | True | True | 42 |
+| model4| base_classifier | 100 | 0.9 | 0.5 | True | True | 42 |
+| model5| base_classifier | 100 | 0.5 | 0.5 | True | True | 42 |
+| model6| base_classifier | 100 | 0.8 | 0.7 | True | True | 42 |
+| model7| base_classifier | 100 | 0.8 | 0.3 | True | True | 42 |
+| model8| base_classifier | 100 | 0.8 | 0.5 | False | False | 42 | 
+| model9| base_classifier | 100 | 0.8 | 0.5 | True | True | 123 | 
+| model10| base_classifier | 100 | 0.8 | 0.5 | True | False | 123| 
+| model11| base_classifier | 100 | 0.8 | 0.5 | True | False | 42 | 
 
 | **GaussianNB**                                              |
+| Model | var_smoothing | priors |
 |-------------------------------------------------------------|
-| model1 = GaussianNB(priors=None)                            |
-| model2 = GaussianNB(var_smoothing=1e-9, priors=None)        |
-| model3 = GaussianNB(var_smoothing=1e-5, priors=[0.2, 0.8])  |
-| model4 = GaussianNB(var_smoothing=1e-3, priors=[0.5, 0.5])  |
-| model5 = GaussianNB(var_smoothing=1e-1, priors=None)        |
-| model6 = GaussianNB(var_smoothing=1.0, priors=[.3, 0.7])    |
-| model7 = GaussianNB(var_smoothing=10.0, priors=[0.6, 0.4])  |
-| model8 = GaussianNB(var_smoothing=1e-9, priors=[0.4, 0.6])  |
-| model9 = GaussianNB(var_smoothing=1e-5, priors=None)        |
-| model10 = GaussianNB(var_smoothing=1e-3, priors=[0.2, 0.8]) |
-| model11 = GaussianNB(var_smoothing=1e-1, priors=[0.5, 0.5]) |
+| model1 | | None |
+| model2 |  1e-9 | None |
+| model3 |  1e-5 | [0.2, 0.8] |
+| model4 |  1e-3 | [0.5, 0.5] |
+| model5 |  1e-1 | None |
+| model6 |  1.0 | [.3, 0.7] |
+| model7 |  10.0 | [0.6, 0.4] |
+| model8 |  1e-9 | [0.4, 0.6] |
+| model9 |  1e-5 | None |
+| model10 |  1e-3 | [0.2, 0.8] |
+| model11 |  1e-1 | [0.5, 0.5} |
 
 
-| **Logistic Regression**                                                                                         |
+| **Logistic Regression** |
+|model | random_state | max_iter | solver | penatly | l1_ratio |
 |-----------------------------------------------------------------------------------------------------------------|
-| model1 = LogisticRegression(random_state=42, max_iter=10000, solver='saga', penalty='elasticnet', l1_ratio=0.1) |
-| model2 = LogisticRegression(random_state=42, max_iter=10000, solver='saga', penalty='elasticnet', l1_ratio=0.3) |
-| model3 = LogisticRegression(random_state=42, max_iter=10000, solver='saga', penalty='elasticnet', l1_ratio=0.5) |
-| model4 = LogisticRegression(random_state=42, max_iter=10000, solver='saga', penalty='elasticnet', l1_ratio=0.7) |
-| model5 = LogisticRegression(random_state=42, max_iter=10000, solver='saga', penalty='elasticnet', l1_ratio=0.9) |
-| model6 = LogisticRegression(random_state=42, max_iter=10000, solver='saga', penalty='l1')                       |
-| model7 = LogisticRegression(random_state=42, max_iter=10000, solver='saga', penalty=None)                       |
-| model8 = LogisticRegression(random_state=42, max_iter=10000, solver='lbfgs', penalty=None)                      |
-| model9 = LogisticRegression(random_state=42, max_iter=10000, solver='liblinear', penalty='l1')                  |
-| model10 = LogisticRegression(random_state=42, max_iter=10000, solver='liblinear', penalty='l2')                 |
-| model11 = LogisticRegression(random_state=42, max_iter=10000, solver='sag', penalty=None)                       |
+| model1 |42 | 10000 | saga | elasticnet | 0.1 |
+| model2 |42 | 10000 | saga | elasticnet | 0.3 |
+| model3 |42 | 10000 | saga | elasticnet | 0.5 |
+| model4 |42 | 10000 | saga | elasticnet | 0.7 |
+| model5 |42 | 10000 | saga | elasticnet | 0.9 |
+| model6 |42 | 10000 | saga | l1 |
+| model7 |42 | 10000 | saga | None |
+| model8 |42 | 10000 | lbfgs | None |
+| model9 |42 | 10000 | liblinear | l1 |
+| model10 |42 | 10000 | liblinear | l2 |
+| model11 |42 | 10000 | sag | None |
 
-
-| **Random Forest**                                                                                                                                                                                                                                   |
-|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| model1 = RandomForestClassifier(n_estimators=100, max_depth=10, min_samples_split=5, min_samples_leaf=1, max_features='sqrt', bootstrap=True, criterion='gini', min_impurity_decrease=0.0, class_weight=None, oob_score=False)                      |
-| model2 = RandomForestClassifier(n_estimators=200, max_depth=20, min_samples_split=10, min_samples_leaf=5, max_features='log2', bootstrap=True, criterion='entropy', min_impurity_decrease=0.001, class_weight='balanced_subsample', oob_score=True) |
-| model3 = RandomForestClassifier(n_estimators=500, max_depth=30, min_samples_split=20, min_samples_leaf=10, max_features=0.5, bootstrap=True, criterion='gini', min_impurity_decrease=0.005, class_weight={0: 1, 1: 3}, oob_score=True)              |
-| model4 = RandomForestClassifier(n_estimators=1000, max_depth=40, min_samples_split=50, min_samples_leaf=20, max_features=None, bootstrap=True, criterion='entropy', min_impurity_decrease=0.01, class_weight={0: 1, 1: 5}, oob_score=True)          |
-| model5 = RandomForestClassifier(n_estimators=200, max_depth=20, min_samples_split=10, min_samples_leaf=5, max_features=0.7, bootstrap=True, criterion='gini', min_impurity_decrease=0.0, class_weight=None, oob_score=False)                        |
-| model6 = RandomForestClassifier(n_estimators=500, max_depth=30, min_samples_split=20, min_samples_leaf=10, max_features=0.3, bootstrap=True, criterion='entropy', min_impurity_decrease=0.0, class_weight='balanced', oob_score=True)               |
-| model7 = RandomForestClassifier(n_estimators=1000, max_depth=40, min_samples_split=50, min_samples_leaf=20, max_features='sqrt', bootstrap=True, criterion='gini', min_impurity_decrease=0.0, class_weight={0: 1, 1: 10}, oob_score=True)           |
-| model8 = RandomForestClassifier(n_estimators=2000, max_depth=50, min_samples_split=100, min_samples_leaf=50, max_features='log2', bootstrap=True, criterion='entropy', min_impurity_decrease=0.0, class_weight=None, oob_score=False)               |
-| model9 = RandomForestClassifier(n_estimators=1000, max_depth=30, min_samples_split=20, min_samples_leaf=10, max_features=None, bootstrap=True, criterion='gini', min_impurity_decrease=0.005, class_weight='balanced', oob_score=True)              |
-| model10 = RandomForestClassifier(n_estimators=500, max_depth=20, min_samples_split=10, min_samples_leaf=5, max_features=0.7, bootstrap=True, criterion='entropy', min_impurity_decrease=0.001, class_weight={0: 1, 1: 5}, oob_score=True)           |
-| model11 = RandomForestClassifier(n_estimators=1000, max_depth=30, min_samples_split=10, min_samples_leaf=5, max_features=0.5, bootstrap=True, criterion='entropy', min_impurity_decrease=0.001, class_weight='balanced', oob_score=True)            |
-
+| **Random Forest**                                                       |
+| model | n_estimators | max_depth | min_samples_split | max_features | boostrap | criterion | min_impurity_decrease | class_weight | oob_score |
+|--------------------------------------------------------------------------------------------------------------------------------------------------|
+| model1 | 100 | 10 | 5 | 1 | sqrt | True | gini | 0.0 | None | False |
+| model2 | 200 | 20 | 10 | 5 | log2 | True | entropy | 0.001 | balanced_subsample | True |
+| model3 | 500 | 30 | 20 | 10 | 0.5 | True | gini | 0.005 | {0: 1, 1: 3} | True |
+| model4 | 1000 | 40 | 50 | 20 | None | True | entropy | 0.01 | {0: 1, 1: 5} | True |
+| model5 | 200 | 20 | 10 | 5 | 0.7 | True | gini | 0.0 | None | False |
+| model6 | 500 | 30 | 20 | 10 | 0.3 | True | entropy | 0.0 | balanced | True|
+| model7 | 1000 | 40 | 50 | 20 | sqrt | True | gini | 0.0 | {0: 1, 1: 10} | True |
+| model8 | 2000 | 50 | 100 | 50 | log2 | True | entropy | 0.0 | None | False |
+| model9 | 1000 | 30 | 20 | 10 | None | True | gini | 0.005 | balanced | True |
+| model10 | 500 | 20 | 10 | 5 | 0.7 | True | entropy | 0.001 | {0: 1, 1: 5} | True |
+| model11 | 1000 | 30 | 10 | 5 | 0.5 | True | entropy | 0.001 | balanced | True |
 
 | **SVM**                                                                                |
+| model | random_state | max_iter | kernel | C | probability |
 |----------------------------------------------------------------------------------------|
-| model1 = SVC(random_state=42, max_iter=1000, kernel='linear', C=0.5, probability=True) |
-| model2 = SVC(random_state=42, max_iter=1000, kernel='linear',C=1, probability=True)    |
-| model3 = SVC(random_state=42, max_iter=1000, kernel='linear',C=10, probability=True)   |
-| model4 = SVC(random_state=42, max_iter=1000, kernel='rbf',C=0.5, probability=True)     |
-| model5 = SVC(random_state=42, max_iter=1000, kernel='rbf',C=1, probability=True)       |
-| model6 = SVC(random_state=42, max_iter=1000, kernel='rbf',C=10, probability=True)      |
-| model7 = SVC(random_state=42, max_iter=1000, kernel='sigmoid',C=0.5, probability=True) |
-| model8 = SVC(random_state=42, max_iter=1000, kernel='sigmoid',C=1, probability=True)   |
-| model9 = SVC(random_state=42, max_iter=1000, kernel='sigmoid',C=10, probability=True)  |
+| model1 | 42 | 1000 | linear | 0.5 | True |
+| model2 | 42 | 1000 | linear | 1 | True |
+| model3 | 42 | 1000 | linear | 10 | True |
+| model4 | 42 | 1000 | rbf | 0.5 | True |
+| model5 | 42 | 1000 | rbf | 1 | True |
+| model6 | 42 | 1000 | rbf | 10 | True |
+| model7 | 42 | 1000 | sigmoid | 0.5 | True |
+| model8 | 42 | 1000 | sigmoid | 1 | True |
+| model9 | 42 | 1000 | sigmoid | 10 | True|
 
 
-| **AdaBoost Classifier**                                                                                                     |
+| **AdaBoost Classifier** |
+| model | base_estimator | n_estimators | learning_rate | algorithm |
 |-----------------------------------------------------------------------------------------------------------------------------|
-| model1 = AdaBoostClassifier(base_estimator=DecisionTreeClassifier(max_depth=1), n_estimators=100, learning_rate=1.0)        |
-| model2 = AdaBoostClassifier(base_estimator=LogisticRegression(solver='lbfgs'), n_estimators=50, learning_rate=0.5)          |
-| model3 = AdaBoostClassifier(base_estimator=SVC(kernel='linear'), n_estimators=200, learning_rate=0.1)                       |
-| model4 = AdaBoostClassifier(base_estimator=RandomForestClassifier(n_estimators=50), n_estimators=100, learning_rate=1.0)    |
-| model5 = AdaBoostClassifier(base_estimator=GradientBoostingClassifier(max_depth=3), n_estimators=150, learning_rate=0.2)    |
-| model6 = AdaBoostClassifier(base_estimator=XGBClassifier(max_depth=4), n_estimators=100, learning_rate=0.5)                 |
-| model7 = AdaBoostClassifier(base_estimator=KNeighborsClassifier(n_neighbors=5), n_estimators=50, learning_rate=1.0)         |
-| model8 = AdaBoostClassifier(base_estimator=DecisionTreeClassifier(max_depth=3), n_estimators=200, learning_rate=0.01)       |
-| model9 = AdaBoostClassifier(base_estimator=MLPClassifier(hidden_layer_sizes=(50, 50)), n_estimators=100, learning_rate=0.1) |
-| model10 = AdaBoostClassifier(base_estimator=QuadraticDiscriminantAnalysis(), n_estimators=50, learning_rate=0.5)            |
-| model11 = AdaBoostClassifier(base_estimator=LinearSVC(max_iter=10000), n_estimators=150, learning_rate=0.05)                |
+| model1 | DecisionTreeClassifier(max_depth=1) | 100 | 1.0 | SAMME |
+| model2 | LogisticRegression(solver='lbfgs' | 50 | 0.5 | SAMME |
+| model3 | SVC(kernel='linear' | 200 | 0.1 | SAMME |
+| model4 | RandomForestClassifier(n_estimators=50) | 100 | 1.0 | SAMME |
+| model5 | GradientBoostingClassifier(max_depth=3) | 150 | 0.2 | SAMME |
+| model6 | DecisionTreeClassifier(max_depth=5) | 100 | 1.0 | SAMME |
+| model7 | LogisticRegression(solver='lbfgs') | 50 | 0.25 | SAMME |
+| model8 | DecisionTreeClassifier(max_depth=3) | 200 | 0.01 | SAMME |
+| model9 | RandomForestClassifier(n_estimators=50) | 100 | 0.5 | SAMME |
+| model10 | GradientBoostingClassifier(max_depth=10) | 150 | 0.1 | SAMME |
+| model11 | LinearSVC(max_iter=10000) | 150 | 0.05 | SAMME |
 
 
 | **LoghtGBM**                                                                                                          |
