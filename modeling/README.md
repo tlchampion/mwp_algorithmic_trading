@@ -25,95 +25,110 @@ As the initial step in the building of all models a ```StandardScaler``` was ins
 
 Each model class had a minimum of 10-plus models built using different parameters. Please see below for a chart depicting the parameters used for each model:
 
-|  **Bagging Classifier**                                                                                                                                              | 
-| Model|  Base Estimator |  m_estimators |  max_samples |  max_features |  bootstrap |  oob_score |  random_state
-| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------| 
-| model1| base_classifier | 200 | 0.8 | 0.5 | True | True | 42 |
-| model2| base_classifier | 50 | 0.8 | 0.5 | True | True | 42 |
-| model3| base_classifier | 100 | 0.8 | 0.5 | True | True | 42 |
-| model4| base_classifier | 100 | 0.9 | 0.5 | True | True | 42 |
-| model5| base_classifier | 100 | 0.5 | 0.5 | True | True | 42 |
-| model6| base_classifier | 100 | 0.8 | 0.7 | True | True | 42 |
-| model7| base_classifier | 100 | 0.8 | 0.3 | True | True | 42 |
-| model8| base_classifier | 100 | 0.8 | 0.5 | False | False | 42 | 
-| model9| base_classifier | 100 | 0.8 | 0.5 | True | True | 123 | 
-| model10| base_classifier | 100 | 0.8 | 0.5 | True | False | 123| 
-| model11| base_classifier | 100 | 0.8 | 0.5 | True | False | 42 | 
+**Bagging Classifier**
 
-| **GaussianNB**                                              |
-| Model | var_smoothing | priors |
-|-------------------------------------------------------------|
-| model1 | | None |
-| model2 |  1e-9 | None |
-| model3 |  1e-5 | [0.2, 0.8] |
-| model4 |  1e-3 | [0.5, 0.5] |
-| model5 |  1e-1 | None |
-| model6 |  1.0 | [.3, 0.7] |
-| model7 |  10.0 | [0.6, 0.4] |
-| model8 |  1e-9 | [0.4, 0.6] |
-| model9 |  1e-5 | None |
-| model10 |  1e-3 | [0.2, 0.8] |
-| model11 |  1e-1 | [0.5, 0.5} |
+| model   | Base Estimator  | m_estimators | max_samples | max_features | bootstrap | oob_score | random_state |
+|:---------:|:-----------------:|:--------------:|:-------------:|:--------------:|:-----------:|:------------:|:
+| model1  | base_classifier | 200          | 0.8         | 0.5          | True      | True      | 42           |
+| model2  | base_classifier | 50           | 0.8         | 0.5          | True      | True      | 42           |
+| model3  | base_classifier | 100          | 0.8         | 0.5          | True      | True      | 42           |
+| model4  | base_classifier | 100          | 0.9         | 0.5          | True      | True      | 42           |
+| model5  | base_classifier | 100          | 0.5         | 0.5          | True      | True      | 42           |
+| model6  | base_classifier | 100          | 0.8         | 0.7          | True      | True      | 42           |
+| model7  | base_classifier | 100          | 0.8         | 0.3          | True      | True      | 42           |
+| model8  | base_classifier | 100          | 0.8         | 0.5          | False     | False     | 42           |
+| model9  | base_classifier | 100          | 0.8         | 0.5          | True      | True      | 123          |
+| model10 | base_classifier | 100          | 0.8         | 0.5          | True      | False     | 123          |
+| model11 | base_classifier | 100          | 0.8         | 0.5          | True      | False     | 42           |
 
 
-| **Logistic Regression** |
-|model | random_state | max_iter | solver | penatly | l1_ratio |
-|-----------------------------------------------------------------------------------------------------------------|
-| model1 |42 | 10000 | saga | elasticnet | 0.1 |
-| model2 |42 | 10000 | saga | elasticnet | 0.3 |
-| model3 |42 | 10000 | saga | elasticnet | 0.5 |
-| model4 |42 | 10000 | saga | elasticnet | 0.7 |
-| model5 |42 | 10000 | saga | elasticnet | 0.9 |
-| model6 |42 | 10000 | saga | l1 |
-| model7 |42 | 10000 | saga | None |
-| model8 |42 | 10000 | lbfgs | None |
-| model9 |42 | 10000 | liblinear | l1 |
-| model10 |42 | 10000 | liblinear | l2 |
-| model11 |42 | 10000 | sag | None |
+**GaussianNB**                                              |
 
-| **Random Forest**                                                       |
-| model | n_estimators | max_depth | min_samples_split | max_features | boostrap | criterion | min_impurity_decrease | class_weight | oob_score |
-|--------------------------------------------------------------------------------------------------------------------------------------------------|
-| model1 | 100 | 10 | 5 | 1 | sqrt | True | gini | 0.0 | None | False |
-| model2 | 200 | 20 | 10 | 5 | log2 | True | entropy | 0.001 | balanced_subsample | True |
-| model3 | 500 | 30 | 20 | 10 | 0.5 | True | gini | 0.005 | {0: 1, 1: 3} | True |
-| model4 | 1000 | 40 | 50 | 20 | None | True | entropy | 0.01 | {0: 1, 1: 5} | True |
-| model5 | 200 | 20 | 10 | 5 | 0.7 | True | gini | 0.0 | None | False |
-| model6 | 500 | 30 | 20 | 10 | 0.3 | True | entropy | 0.0 | balanced | True|
-| model7 | 1000 | 40 | 50 | 20 | sqrt | True | gini | 0.0 | {0: 1, 1: 10} | True |
-| model8 | 2000 | 50 | 100 | 50 | log2 | True | entropy | 0.0 | None | False |
-| model9 | 1000 | 30 | 20 | 10 | None | True | gini | 0.005 | balanced | True |
-| model10 | 500 | 20 | 10 | 5 | 0.7 | True | entropy | 0.001 | {0: 1, 1: 5} | True |
-| model11 | 1000 | 30 | 10 | 5 | 0.5 | True | entropy | 0.001 | balanced | True |
-
-| **SVM**                                                                                |
-| model | random_state | max_iter | kernel | C | probability |
-|----------------------------------------------------------------------------------------|
-| model1 | 42 | 1000 | linear | 0.5 | True |
-| model2 | 42 | 1000 | linear | 1 | True |
-| model3 | 42 | 1000 | linear | 10 | True |
-| model4 | 42 | 1000 | rbf | 0.5 | True |
-| model5 | 42 | 1000 | rbf | 1 | True |
-| model6 | 42 | 1000 | rbf | 10 | True |
-| model7 | 42 | 1000 | sigmoid | 0.5 | True |
-| model8 | 42 | 1000 | sigmoid | 1 | True |
-| model9 | 42 | 1000 | sigmoid | 10 | True|
+| model   | var_smoothing | priors       |
+|:---------:|:---------------:|:--------------:|
+| model1  |               | None         |
+| model2  | 1e-9          | None         |
+| model3  | 1e-5          |  [0.2, 0.8]  |
+| model4  | 1e-3          |  [0.5, 0.5]  |
+| model5  | 1e-1          | None         |
+| model6  | 1.0           |  [.3, 0.7]   |
+| model7  | 10.0          |  [0.6, 0.4]  |
+| model8  | 1e-9          |  [0.4, 0.6]  |
+| model9  | 1e-5          | None         |
+| model10 | 1e-3          |  [0.2, 0.8]  |
+| model11 | 1e-1          |  [0.5, 0.5]  |
 
 
-| **AdaBoost Classifier** |
-| model | base_estimator | n_estimators | learning_rate | algorithm |
-|-----------------------------------------------------------------------------------------------------------------------------|
-| model1 | DecisionTreeClassifier(max_depth=1) | 100 | 1.0 | SAMME |
-| model2 | LogisticRegression(solver='lbfgs' | 50 | 0.5 | SAMME |
-| model3 | SVC(kernel='linear' | 200 | 0.1 | SAMME |
-| model4 | RandomForestClassifier(n_estimators=50) | 100 | 1.0 | SAMME |
-| model5 | GradientBoostingClassifier(max_depth=3) | 150 | 0.2 | SAMME |
-| model6 | DecisionTreeClassifier(max_depth=5) | 100 | 1.0 | SAMME |
-| model7 | LogisticRegression(solver='lbfgs') | 50 | 0.25 | SAMME |
-| model8 | DecisionTreeClassifier(max_depth=3) | 200 | 0.01 | SAMME |
-| model9 | RandomForestClassifier(n_estimators=50) | 100 | 0.5 | SAMME |
-| model10 | GradientBoostingClassifier(max_depth=10) | 150 | 0.1 | SAMME |
-| model11 | LinearSVC(max_iter=10000) | 150 | 0.05 | SAMME |
+
+
+
+**Logistic Regression**
+
+| model   | random_state | max_iter | solver    | penatly    | l1_ratio |
+|:---------:|:--------------:|:----------:|:-----------:|:-------------:|:
+| model1  | 42           | 10000    | saga      | elasticnet | 0.1      |
+| model2  | 42           | 10000    | saga      | elasticnet | 0.3      |
+| model3  | 42           | 10000    | saga      | elasticnet | 0.5      |
+| model4  | 42           | 10000    | saga      | elasticnet | 0.7      |
+| model5  | 42           | 10000    | saga      | elasticnet | 0.9      |
+| model6  | 42           | 10000    | saga      | l1         |          |
+| model7  | 42           | 10000    | saga      | None       |          |
+| model8  | 42           | 10000    | lbfgs     | None       |          |
+| model9  | 42           | 10000    | liblinear | l1         |          |
+| model10 | 42           | 10000    | liblinear | l2         |          |
+| model11 | 42           | 10000    | sag       | None       |          |
+
+
+**Random Forest**                                                       |
+
+| model   | n_estimators | max_depth | min_samples_split | min_samples_leaf | max_features | boostrap | criterion | min_impurity_decrease | class_weight       | oob_score |
+|:-------:|:------------:|:---------:|:-----------------:|:----------------:|:------------:|:--------:|:---------:|:---------------------:|:------------------:|:---------:|
+| model1  | 100          | 10        | 5                 | 1                | sqrt         | True     | gini      | 0.0                   | None               | False     |
+| model2  | 200          | 20        | 10                | 5                | log2         | True     | entropy   | 0.001                 | balanced_subsample | True      |
+| model3  | 500          | 30        | 20                | 10               | 0.5          | True     | gini      | 0.005                 | {0: 1, 1: 3}       | True      |
+| model4  | 1000         | 40        | 50                | 20               | None         | True     | entropy   | 0.01                  | {0: 1, 1: 5}       | True      |
+| model5  | 200          | 20        | 10                | 5                | 0.7          | True     | gini      | 0.0                   | None               | False     |
+| model6  | 500          | 30        | 20                | 10               | 0.3          | True     | entropy   | 0.0                   | balanced           | True      |
+| model7  | 1000         | 40        | 50                | 20               | sqrt         | True     | gini      | 0.0                   | {0: 1, 1: 10}      | True      |
+| model8  | 2000         | 50        | 100               | 50               | log2         | True     | entropy   | 0.0                   | None               | False     |
+| model9  | 1000         | 30        | 20                | 10               | None         | True     | gini      | 0.005                 | balanced           | True      |
+| model10 | 500          | 20        | 10                | 5                | 0.7          | True     | entropy   | 0.001                 | {0: 1, 1: 5}       | True      |
+| model11 | 1000         | 30        | 10                | 5                | 0.5          | True     | entropy   | 0.001                 | balanced           | True      |
+
+
+**SVM**     
+
+| model  | random_state | max_iter | kernel  | C   | probability |
+|:------:|:------------:|:--------:|:-------:|:---:|:-----------:|
+| model1 | 42           | 1000     | linear  | 0.5 | True        |
+| model2 | 42           | 1000     | linear  | 1   | True        |
+| model3 | 42           | 1000     | linear  | 10  | True        |
+| model4 | 42           | 1000     | rbf     | 0.5 | True        |
+| model5 | 42           | 1000     | rbf     | 1   | True        |
+| model6 | 42           | 1000     | rbf     | 10  | True        |
+| model7 | 42           | 1000     | sigmoid | 0.5 | True        |
+| model8 | 42           | 1000     | sigmoid | 1   | True        |
+| model9 | 42           | 1000     | sigmoid | 10  | True        |
+
+
+
+
+**AdaBoost Classifier**
+
+| model   | base_estimator                           | n_estimators | learning_rate | algorithm |
+|:-------:|:----------------------------------------:|:------------:|:-------------:|:---------:|
+| model1  | DecisionTreeClassifier(max_depth=1)      | 100          | 1.0           | SAMME     |
+| model2  | LogisticRegression(solver='lbfgs'        | 50           | 0.5           | SAMME     |
+| model3  | SVC(kernel='linear'                      | 200          | 0.1           | SAMME     |
+| model4  | RandomForestClassifier(n_estimators=50)  | 100          | 1.0           | SAMME     |
+| model5  | GradientBoostingClassifier(max_depth=3)  | 150          | 0.2           | SAMME     |
+| model6  | DecisionTreeClassifier(max_depth=5)      | 100          | 1.0           | SAMME     |
+| model7  | LogisticRegression(solver='lbfgs')       | 50           | 0.25          | SAMME     |
+| model8  | DecisionTreeClassifier(max_depth=3)      | 200          | 0.01          | SAMME     |
+| model9  | RandomForestClassifier(n_estimators=50)  | 100          | 0.5           | SAMME     |
+| model10 | GradientBoostingClassifier(max_depth=10) | 150          | 0.1           | SAMME     |
+| model11 | LinearSVC(max_iter=10000)                | 150          | 0.05          | SAMME     |
+
 
 
 | **LoghtGBM**                                                                                                          |
