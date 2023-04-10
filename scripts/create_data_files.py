@@ -18,6 +18,7 @@ import modules.AlgoTab as at
 from pandas.tseries.offsets import DateOffset
 from joblib import dump, load
 from modules.MCForecastTools import MCSimulation
+import hvplot.pandas
 
 
 
@@ -95,6 +96,8 @@ def create_ml_prediction_data():
     for c in classes:
         df = af.build_ml_prediction_data(c)
         df.drop(['performance_signal'], axis=1, inplace=True)
+        df = df[['SMA_200', 'EMA_50', 'BBL_20_2.0','BBM_20_2.0',
+                          'BBU_20_2.0','BBB_20_2.0','BBP_20_2.0']]
         df.reset_index(inplace = True)
         filename = f"ml_prediction_data_{c}.csv"
         file_path = Path(f"../data/ml_prediction_data/{filename}")
@@ -106,6 +109,8 @@ def MC_create_ml_prediction_data():
     for c in classes:
         df = af.MC_build_ml_prediction_data(c)
         df.drop(['performance_signal'], axis=1, inplace=True)
+        df = df[['SMA_200', 'EMA_50', 'BBL_20_2.0','BBM_20_2.0',
+                          'BBU_20_2.0','BBB_20_2.0','BBP_20_2.0']]
         df.reset_index(inplace = True)
         filename = f"mc_ml_prediction_data_{c}.csv"
         file_path = Path(f"../MCdata/MC_ml_prediction_data/{filename}")
@@ -259,7 +264,7 @@ def create_mc_info():
 
     for p in portfolios:
         for s in strategies:
-            df = pd.read_csv(Path(f"./MCdata/MCperformance/mc_performance_data_{s}_{p}.csv"),infer_datetime_format=True, parse_dates=True, index_col="index")
+            df = pd.read_csv(Path(f"../MCdata/MCperformance/mc_performance_data_{s}_{p}.csv"),infer_datetime_format=True, parse_dates=True, index_col="index")
             df['type'] = f"{p}"
             df.set_index('type', append=True, inplace=True)
             df = df.unstack()
@@ -269,7 +274,7 @@ def create_mc_info():
             hvplot.save(simulation_plot, Path(f"./figures/simulation_{s}_{p}.png"))
             distribution_plot.savefig(Path(f"./figures/distribution_{s}_{p}.png"))
             items = [summary, text]
-            dump(items, Path(f"./MCdata/mcItems_{s}_{p}.joblib"))
+            dump(items, Path(f"../MCdata/mcItems_{s}_{p}.joblib"))
         
 
 
