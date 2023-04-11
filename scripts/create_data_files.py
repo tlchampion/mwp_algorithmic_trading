@@ -24,11 +24,11 @@ import hvplot.pandas
 
 def create_performance_data():
     classes = ['conservative', 'balanced', 'growth', 'aggressive', 'alternative']
-    strategies_list = {'conservative': ['sma', 'rsi', 'macd','stoch'],
-              'balanced': ['sma', 'rsi', 'macd','stoch'],
-              'growth': ['sma', 'rsi', 'macd','stoch'],
-              'aggressive': ['sma', 'rsi', 'macd','stoch'],
-              'alternative': ['sma', 'rsi', 'macd','stoch']
+    strategies_list = {'conservative': ['sma', 'rsi', 'macd','stoch', 'bb'],
+              'balanced': ['sma', 'rsi', 'macd','stoch', 'bb'],
+              'growth': ['sma', 'rsi', 'macd','stoch','bb'],
+              'aggressive': ['sma', 'rsi', 'macd','stoch','bb'],
+              'alternative': ['sma', 'rsi', 'macd','stoch','bb']
              }
     for c in classes:
         start_date = af.default_test_start_date
@@ -118,11 +118,11 @@ def MC_create_ml_prediction_data():
 
 def MC_create_performance_data():
     classes = ['conservative', 'balanced', 'growth', 'aggressive', 'alternative']
-    strategies_list = {'conservative': ['sma', 'rsi', 'macd','stoch'],
-              'balanced': ['sma', 'rsi', 'macd','stoch'],
-              'growth': ['sma', 'rsi', 'macd','stoch'],
-              'aggressive': ['sma', 'rsi', 'macd','stoch'],
-              'alternative': ['sma', 'rsi', 'macd','stoch']
+    strategies_list = {'conservative': ['sma', 'rsi', 'macd','stoch', 'bb'],
+              'balanced': ['sma', 'rsi', 'macd','stoch', 'bb'],
+              'growth': ['sma', 'rsi', 'macd','stoch', 'bb'],
+              'aggressive': ['sma', 'rsi', 'macd','stoch', 'bb'],
+              'alternative': ['sma', 'rsi', 'macd','stoch','bb']
              }
     for c in classes:
         start_date = datetime.datetime.strptime('2018-4-1', '%Y-%m-%d')
@@ -260,7 +260,7 @@ def prep_strategy_MC_data(ticker_data):
 def create_mc_info():
 
     portfolios = ['conservative', 'balanced', 'growth', 'aggressive', 'alternative']
-    strategies = ['macd', 'ml', 'rsi', 'sma', 'stoch']
+    strategies = ['macd', 'ml', 'rsi', 'sma', 'stoch', 'bb']
 
     for p in portfolios:
         for s in strategies:
@@ -271,8 +271,8 @@ def create_mc_info():
             df = df.reorder_levels([1,0], axis=1)
             df.rename(columns = {'Portfolio Daily Returns':'daily_return'}, inplace = True)
             simulation_plot, distribution_plot, summary, text = prep_strategy_MC_data(df)
-            hvplot.save(simulation_plot, Path(f"./figures/simulation_{s}_{p}.png"))
-            distribution_plot.savefig(Path(f"./figures/distribution_{s}_{p}.png"))
+            hvplot.save(simulation_plot, Path(f"../figures/simulation_{s}_{p}.png"))
+            distribution_plot.savefig(Path(f"../figures/distribution_{s}_{p}.png"))
             items = [summary, text]
             dump(items, Path(f"../MCdata/mcItems_{s}_{p}.joblib"))
         
