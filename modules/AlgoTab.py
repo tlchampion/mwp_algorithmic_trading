@@ -84,7 +84,7 @@ def get_intro():
 <p><h1>Welcome to MyWealthPlan Portfolio Alogorithmic Trading</h1></p>
 
 <p>In addition to a &lsquo;Buy and Hold&rsquo; strategy, MyWealthPlan offers an active portfolio investment strategy that monitors daily market activity and places buy/sell orders based upon your current position in the portfolio and the current market trend.</p>
-
+<h2>Our Strategy</h2>
 <p> Our active investment strategy requires you to make an initial investment into your chosen portfolio which will become your base investment. In addition, we require you to fund a cash reserve account. The funds from the cash reserve account will be used to purchase additional shares of your portfolio and will recieve any funds from the selling of shares.</p>
 
 <p> When our strategy signals a 'buy' order for your portfolio, a portion of your cash reserves will be used to buy a predetermined number (X) of additional shares as long as your last action was not a 'buy'.</p>
@@ -94,7 +94,7 @@ def get_intro():
 <p>If your last action matches the current signal generated, no action will be taken.</p>
 
 <p>Effectively, you will always maintain a base investment position in your portfolio, but your amount invested may be temporarily increased at times based upon market indicators. This increase is in addition to any specific increases you request, which would impact your base investment level.</p>
-
+<br>
 <p>You may use the dropdown menu below to select from multiple trading strategies in order to compare their individual performance over time. Performance is modeled using recent historical data. Past performance is not indicative of future performance and results seen after investing and selecting any given strategy may not conform to the performance shown here.</p>
 
 """
