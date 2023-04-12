@@ -17,6 +17,7 @@ def get_intro():
     * "Portfolio Profile" provides information on the allocation of assets between Stocks, Bonds, Cryptocurrencies and Commodoties
     * "Past Performance" provides information regarding the historical performance of the selected portfolio along with a comparison to the historical performance of the S&P 500
     * "Future Performance" provides the results of a Monte Carlo simulation using 200 iterations and can be useful to gauge the potential future performance of the portfolio
+    * "Alogrithmic Trading" provided information on a selection of investment strategies using market conditions to trigger buy/sell actions with the goal of improving total returns over time
    
     """
     

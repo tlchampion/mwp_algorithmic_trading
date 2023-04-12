@@ -1,8 +1,11 @@
+import warnings
+warnings.filterwarnings('ignore')
 import datetime
 import pandas as pd
 import numpy as np
 from pathlib import Path
 import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'
 import sys
 module_path = os.path.abspath(os.path.join('..'))
 if module_path not in sys.path:
@@ -19,11 +22,17 @@ from pandas.tseries.offsets import DateOffset
 from joblib import dump, load
 from modules.MCForecastTools import MCSimulation
 import hvplot.pandas
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+from sklearn.preprocessing import StandardScaler
+
 
 
 
 def create_performance_data():
     classes = ['conservative', 'balanced', 'growth', 'aggressive', 'alternative']
+    nn_classes = ['alternative']
     strategies_list = {'conservative': ['sma', 'rsi', 'macd','stoch', 'bb'],
               'balanced': ['sma', 'rsi', 'macd','stoch', 'bb'],
               'growth': ['sma', 'rsi', 'macd','stoch','bb'],
@@ -52,13 +61,28 @@ def create_performance_data():
             
         # create performance dataframes for each strategy for the select ML model
        
-        # import model
-        filepath = Path(f"../modeling/saved_models/{c}.joblib")
-        model = load(filepath) 
-        # load data to make predictions on
-        file = Path(f"../data/ml_prediction_data/ml_prediction_data_{c}.csv")
-        pred_data = pd.read_csv(file, infer_datetime_format=True, parse_dates=True, index_col = 'index')
-        preds = model.predict(pred_data)
+        if c not in nn_classes:
+    
+    
+            # import model
+            filepath = Path(f"../modeling/saved_models/{c}.joblib")
+            model = load(filepath) 
+            # load data to make predictions on
+            file = Path(f"../data/ml_prediction_data/ml_prediction_data_{c}.csv")
+            pred_data = pd.read_csv(file, infer_datetime_format=True, parse_dates=True, index_col = 'index')
+            preds = model.predict(pred_data)
+            
+        else:
+            filepath = Path(f"../modeling/saved_models/{c}.h5")
+            model = tf.keras.models.load_model(filepath)
+            file = Path(f"../data/ml_prediction_data/ml_prediction_data_{c}.csv")
+            pred_data = pd.read_csv(file, infer_datetime_format=True, parse_dates=True, index_col = 'index')
+            predictions = model.predict(pred_data)
+            preds = tf.cast(predictions >= 0.5, tf.int32)
+        
+        
+        
+        
         preds_df = pd.DataFrame(index=pred_data.index)
         preds_df['model_signal'] = preds
 
@@ -280,12 +304,19 @@ def create_mc_info():
 
     
 def create_all_data():
+    print("creating ML prediction data\n")
     create_ml_prediction_data()
+    print("creating S&P 500 historical data\n")
     create_market_data()
+    print("creating train/test datasets for ML modeling\n")
     create_train_test()
+    print("creating strategy performance data\n")
     create_performance_data()
+    print("creating MC predictio data\n")
     MC_create_ml_prediction_data()
+    print("creating MC performance data\n")
     MC_create_performance_data()
+    print("creating MC graphs\n")
     create_mc_info()
 
 
