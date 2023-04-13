@@ -1,12 +1,22 @@
-# MyWealthPlan Investment Platform
 
-The MyWealthPlan Investment Platform is a dashboard application designed to determine a user's risk tolerance for investments, and based upon that tolerance present them with information on one of 5 preselected portfolios who's asset weightings align with the user's risk tolerance.  
+# MyWealthPath Algorithmic Trading and ML Tool
 
-After being matched to a portfolio, the user can navigate between 4 informational tabs to find details related to their portfolio, including asset category weights, historical performance and potential future performance.
+This Project is a Dashboard application that expands upon the [Portfolio Selection and Simulation Tool](https://github.com/LourdesDB/personal_financial_advisor) already created in Project 1, MyWealthPath.
 
-The first 3 informational tabs provide details on the portfolio composition, historical performance and probabalisitc future performance using Monte Carlo simulations.
+In that **initial project**, a Portfolio Selection Tool was created as a dashboard application designed to determine a user's risk tolerance for investments (online questionnaire). Based upon that tolerance, they are presented with information on one of 5 preselected portfolios who's asset weightings align with the user's risk tolerance. After being matched to a portfolio, the user can navigate between 3 informational tabs to find details related to their portfolio, including asset category weights, historical performance and potential future performance (Montecarlo simulation).
 
-The final information tab provides comparative information on a set of active investment strategies. Comparisons are made for the active investment strategy with the S&P 500 as well as with the portfolio's performance if not following the investment strategy.
+In this **second phase** of the project, the user has access to a new tool that allows them to:
+
+* Choose amoung different Trading Strategies that enhance the Portfolio performance beyond the base 'buy and hold' strategy.
+* Backtest the performance of the strategy of choice and benchmark it against a Market reference.
+* Run the Montecarlo simulation for expected future returns.
+* Get a more customized prediction based on a ML model selected by the tool among many as the most accurate and best performing one.
+
+For this second Project, a full description of the analysis process and coding has been created in the [Data](https://github.com/tlchampion/mwp_algorithmic_trading/blob/main/data/README.md) and [Modeling](https://github.com/tlchampion/mwp_algorithmic_trading/blob/main/modeling/README.md) specific README files.
+
+And a more detailed presentation can be found [Here](./MyWealthPath_Project_2.pptx).  
+=======
+
 
 
 ---
@@ -21,7 +31,7 @@ Details on asset performance are retrieved using the [Yahoo Finance](https://fin
 
 The [Pandas](https://pandas.pydata.org) and [Numpy](https://numpy.org) libraries are used to work with the asset data retrieved from the API.
 
-
+For the Machine Learning Models training, testing and selection, the [scikit-learn](https://scikit-learn.org/stable/index.html) library is used.
 
 
 ---
@@ -68,7 +78,7 @@ You will then be promtped to either create all data files and the machine learni
 
 The MyWealthPlan Investment Platform can be run from the jupyter notebook or by using the included python script. In either case, once launched a [Panel](https://panel.holoviz.org/index.html) dashboard will be displayed.
 
-To run the included python script (mywealthplan.py issue the following command after switching to the correct python environment:
+To run the included python script (```mywealthplan.py``` issue the following command after switching to the correct python environment:
 
 ```
 panel serve mywealthplan.py
@@ -78,14 +88,13 @@ This will initiate a local server. Please review the output for the server addre
 <img src="images/serving.png" height=60%, width=60%>
 
 
-
-To run the jupyter notebook (mywealthplan.ipynb) begin by launching jupyter lab in the correct python environment:
+To run the jupyter notebook (```mywealthplan.ipynb```) begin by launching jupyter lab in the correct python environment:
 
 ```
 jupyter lab
 ```
 
-After Jupyter Lab is running, open the mywealthplan.ipynb file from the sidebar and then use Run > Run All Cells from the menu.
+After Jupyter Lab is running, open the ```mywealthplan.ipynb``` file from the sidebar and then use Run > Run All Cells from the menu.
 
 
 ---
@@ -105,9 +114,19 @@ Then the client can go to the 'Past Performance' tab where a deeper analysis of 
 
 <img src="images/past_perf.png" height=60% width=60%>
 
-Finally, on the last tab, a 10 years Monte Carlo Simulation can be launched in order to get a lower and upper range for the expected performance with a 95% confidence interval:
+On the next tab, a 10 years Monte Carlo Simulation can be launched in order to get a lower and upper range for the expected performance with a 95% confidence interval:
 
 <img src="images/simulations.png" height=60% width=60%>
+
+Lastly, on the **'Algortihmic Trading' tab**, the user can select a Trading Strategy and a backtest of it's performance will be displayed (vs the plain 'buy and hold' Portfolio and vs the S&P500 as Market reference). The tool will also choose the best performing ML Model among 7 different models (and 11 parameter variations within each of them).
+
+<img src="images/strategies.png" height=100% width=100%>
+
+It will also show Monte Carlo simulations for the strategy:
+
+<img src="images/strategies_montecarlo.png" height=60% width=60%>
+
+With all this information, the Client can clearly see both the past and predicted performance of the base Portfolio (buy and hold) assigned to their risk-aversion level, its performance if they add an 'enhancing' trading strategy, and the benchmark/comparison against a widely used Market reference.
 
 
 ---
@@ -137,10 +156,10 @@ ___
 Future work and/or enhancements to this project include:
 * Implementing a more robust Risk Analysis Survey
 * Adding in features to allow a user to fine-tuning their portfolio
-* Leveraging a Machine Learning algorithm to optimize and further customize portfolios
 * Adding market information for the client
 * Improve visualizations
 * Enhance UI/UX
+* Add a blockchain contracts feature to onboard and sign-up the client
 
 
 ---
