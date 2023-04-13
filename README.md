@@ -1,6 +1,7 @@
+
 # MyWealthPath Algorithmic Trading and ML Tool
 
-This Project is a Dashboard application that complements the [Portfolio Selection and Simulation Tool](https://github.com/LourdesDB/personal_financial_advisor) already created in Project 1, MyWealthPath.
+This Project is a Dashboard application that expands upon the [Portfolio Selection and Simulation Tool](https://github.com/LourdesDB/personal_financial_advisor) already created in Project 1, MyWealthPath.
 
 In that **initial project**, a Portfolio Selection Tool was created as a dashboard application designed to determine a user's risk tolerance for investments (online questionnaire). Based upon that tolerance, they are presented with information on one of 5 preselected portfolios who's asset weightings align with the user's risk tolerance. After being matched to a portfolio, the user can navigate between 3 informational tabs to find details related to their portfolio, including asset category weights, historical performance and potential future performance (Montecarlo simulation).
 
@@ -13,14 +14,16 @@ In this **second phase** of the project, the user has access to a new tool that 
 
 For this second Project, a full description of the analysis process and coding has been created in the [Data](https://github.com/tlchampion/mwp_algorithmic_trading/blob/main/data/README.md) and [Modeling](https://github.com/tlchampion/mwp_algorithmic_trading/blob/main/modeling/README.md) specific README files.
 
-And a more detailed presentation can be found [Here](./MyWealthPath_Project_2.pptx)
+And a more detailed presentation can be found [Here](./MyWealthPath_Project_2.pptx).  
+=======
+
 
 
 ---
 
 ## Technologies
 
-The Portfolio Selection Tool is written in Python and uses the [Panel](https://panel.holoviz.org/index.html) dashboarding solution to present information to the user. 
+The MyWealthPlan Investment Platform is written in Python and uses the [Panel](https://panel.holoviz.org/index.html) dashboarding solution to present information to the user. 
 
 Visualizations are provided by the [Bokeh](https://bokeh.org), [hvPlot](https://hvplot.holoviz.org) and [Matplotlib](https://matplotlib.org) libraries. 
 
@@ -45,6 +48,9 @@ The following python packages must be installed to run the application locally:
 * yahoo_fin
 * numpy
 * hvplot
+* tensorflow
+* pandas_ta
+* questionary
 * jupyterlab (only if the .ipynb file is used. running the .py file does not require jupyterlab)
 
 These packages may be individually installed into the environment of your choice or you may create a new conda environment using the included environment.yml file. 
@@ -58,10 +64,19 @@ If you prefer using pip, the included requirements.txt file may be used to insta
 ```
 pip install -r requirements.txt
 ```
+### Data Creation
+
+Prior to running the application it is necessary to create all the datasets and machine learning models required for the active investment strategy. This can be accomplished by running the create_data_files.py script found in the scripts directory.
+
+```
+python create_data_files.py
+```
+
+You will then be promtped to either create all data files and the machine learning models or just to create all data.  If you have already created the machine learning models you may select the data only option in order to refresh your local datasets with the most current data available.
 
 ## Launching
 
-The Portfolio Selection Tool can be run from the jupyter notebook or by using the included python script. In either case, once launched a [Panel](https://panel.holoviz.org/index.html) dashboard will be displayed.
+The MyWealthPlan Investment Platform can be run from the jupyter notebook or by using the included python script. In either case, once launched a [Panel](https://panel.holoviz.org/index.html) dashboard will be displayed.
 
 To run the included python script (```mywealthplan.py``` issue the following command after switching to the correct python environment:
 
@@ -118,11 +133,11 @@ With all this information, the Client can clearly see both the past and predicte
 
 ## Contributors
 
-[Ahmad Takatkah](https://github.com/vcpreneur)
-[Lourdes Dominguez Begoa](https://github.com/LourdesDB)
-[Patricio Gomez](https://github.com/patogogo)
-[Lovedeep Singh](https://github.com/LovedeepSingh89)
-[Thomas L. Champion](https://github.com/tlchampion)
+[Ahmad Takatkah](https://github.com/vcpreneur)  
+[Lourdes Dominguez Begoa](https://github.com/LourdesDB)  
+[Patricio Gomez](https://github.com/patogogo)  
+[Lovedeep Singh](https://github.com/LovedeepSingh89)  
+[Thomas L. Champion](https://github.com/tlchampion)  
 
 ---
 

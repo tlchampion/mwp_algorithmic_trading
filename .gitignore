@@ -1,6 +1,13 @@
 .DS_STORE
 .vscode
 .env
+modeling/hp/
+images/
+data/
+MCdata/
+modeling/data/
+modeling/saved_models/
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

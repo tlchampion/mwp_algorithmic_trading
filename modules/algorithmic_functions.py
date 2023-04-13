@@ -157,6 +157,28 @@ def build_ml_prediction_data(portfolio_class,
     start = str(datetime.datetime(year, month, day).date())
     return df.loc[start:,]
 
+# build data to feed to ML model for daily predictions for use in MC simulations
+def MC_build_ml_prediction_data(portfolio_class, 
+                             year=2017,
+                             month=12,
+                             day=31):
+    df = get_portfolio_summary(portfolio_class, year, month, day)
+    df.ta.log_return(cumulative=True, append=True)
+    df.ta.log_return(cumulative=False, append=True)
+    df.ta.percent_return(append=True, cumulative=True)
+    df.ta.percent_return(append=True, cumulative=False)
+    df = add_indicators(df)
+    df = df.dropna()
+    df['performance_signal'] = 0
+    for index, row in df.iterrows():
+        if row['PCTRET_1'] >= 0:
+            df.loc[index,'performance_signal'] = 1
+        # elif row['PCTRET_1'] < 0:
+        #     df.loc[index,'performance_signal'] = -1
+    df = df.drop(['open', 'high', 'low', 'close', 'adjclose', 'volume','CUMLOGRET_1','LOGRET_1', 'CUMPCTRET_1', 'PCTRET_1'], axis=1)
+    # start = str(datetime.datetime(year, month, day).date())
+    return df
+
 # build dataframe showing Bollinger Bands, SMA and MACD signals and 
 # dataframe used for training ML models
 def build_portfolio_signal_ml_df(name, start_year, start_month, start_day):
