@@ -34,12 +34,13 @@ from sklearn.naive_bayes import GaussianNB
 from pandas.tseries.offsets import DateOffset
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import classification_report, roc_auc_score, f1_score 
+from sklearn.ensemble import RandomForestClassifier
 
 
 
 def create_performance_data():
     classes = ['conservative', 'balanced', 'growth', 'aggressive', 'alternative']
-    nn_classes = ['alternative']
+    nn_classes = ['balanced']
     strategies_list = {'conservative': ['sma', 'rsi', 'macd','stoch', 'bb'],
               'balanced': ['sma', 'rsi', 'macd','stoch', 'bb'],
               'growth': ['sma', 'rsi', 'macd','stoch','bb'],
@@ -47,6 +48,7 @@ def create_performance_data():
               'alternative': ['sma', 'rsi', 'macd','stoch','bb']
              }
     for c in classes:
+        
         start_date = af.default_test_start_date
         df, ml = af.build_portfolio_signal_ml_df(c, 2017, 12, 31)
         share_size = af.default_share_size[c]
@@ -71,9 +73,11 @@ def create_performance_data():
         if c not in nn_classes:
     
     
-            # import model
+            # import model 
             filepath = Path(f"../modeling/saved_models/{c}.joblib")
-            model = load(filepath) 
+            
+            with open(filepath, 'rb') as file:
+                model = load(file) 
             # load data to make predictions on
             file = Path(f"../data/ml_prediction_data/ml_prediction_data_{c}.csv")
             pred_data = pd.read_csv(file, infer_datetime_format=True, parse_dates=True, index_col = 'index')
@@ -123,11 +127,12 @@ def create_market_data():
     
 def create_ml_prediction_data():
     classes = ['conservative', 'balanced', 'growth', 'aggressive', 'alternative']
-    
+    reduced = ['balanced']
     for c in classes:
         df = af.build_ml_prediction_data(c)
         df.drop(['performance_signal'], axis=1, inplace=True)
-        df = df[['SMA_200', 'EMA_50', 'BBL_20_2.0','BBM_20_2.0',
+        if c in reduced:
+            df = df[['SMA_200', 'EMA_50', 'BBL_20_2.0','BBM_20_2.0',
                           'BBU_20_2.0','BBB_20_2.0','BBP_20_2.0']]
         df.reset_index(inplace = True)
         filename = f"ml_prediction_data_{c}.csv"
@@ -136,11 +141,12 @@ def create_ml_prediction_data():
         
 def MC_create_ml_prediction_data():
     classes = ['conservative', 'balanced', 'growth', 'aggressive', 'alternative']
-    
+    reduced = ['balanced']
     for c in classes:
         df = af.MC_build_ml_prediction_data(c)
         df.drop(['performance_signal'], axis=1, inplace=True)
-        df = df[['SMA_200', 'EMA_50', 'BBL_20_2.0','BBM_20_2.0',
+        if c in reduced:
+            df = df[['SMA_200', 'EMA_50', 'BBL_20_2.0','BBM_20_2.0',
                           'BBU_20_2.0','BBB_20_2.0','BBP_20_2.0']]
         df.reset_index(inplace = True)
         filename = f"mc_ml_prediction_data_{c}.csv"
@@ -149,7 +155,7 @@ def MC_create_ml_prediction_data():
 
 def MC_create_performance_data():
     classes = ['conservative', 'balanced', 'growth', 'aggressive', 'alternative']
-    nn_classes = ['alternative']
+    nn_classes = ['balanced']
     strategies_list = {'conservative': ['sma', 'rsi', 'macd','stoch', 'bb'],
               'balanced': ['sma', 'rsi', 'macd','stoch', 'bb'],
               'growth': ['sma', 'rsi', 'macd','stoch', 'bb'],
@@ -181,7 +187,8 @@ def MC_create_performance_data():
        
         # import model
         # filepath = Path(f"../modeling/saved_models/{c}.joblib")
-        # model = load(filepath) 
+        # with open(filepath, 'rb') as file:
+        #     model = load(file) 
         # # load data to make predictions on
         # file = Path(f"../MCdata/mc_ml_prediction_data/mc_ml_prediction_data_{c}.csv")
         # pred_data = pd.read_csv(file, infer_datetime_format=True, parse_dates=True, index_col = 'index')
@@ -191,7 +198,8 @@ def MC_create_performance_data():
     
             # import model
             filepath = Path(f"../modeling/saved_models/{c}.joblib")
-            model = load(filepath) 
+            with open(filepath, 'rb') as file:
+                model = load(file) 
             # load data to make predictions on
             file = Path(f"../MCdata/mc_ml_prediction_data/mc_ml_prediction_data_{c}.csv")
             pred_data = pd.read_csv(file, infer_datetime_format=True, parse_dates=True, index_col = 'index')
@@ -245,13 +253,13 @@ def create_train_test():
         y = ml_df['performance_signal'].copy()
 
         training_begin = X.index.min()
-        training_end = X.index.min() + DateOffset(months=36)
-
+        training_end = X.index.min() + DateOffset(months=24)
+        test_end = training_end + DateOffset(months=12)
 
         X_train = X.loc[training_begin:training_end]
-        X_test = X.loc[training_end:]
+        X_test = X.loc[training_end:test_end]
         y_train = y.loc[training_begin:training_end]
-        y_test = y.loc[training_end:]
+        y_test = y.loc[training_end:test_end]
         
 
         # # save X_train/test datasets
@@ -327,7 +335,9 @@ def create_mc_info():
             hvplot.save(simulation_plot, Path(f"../figures/simulation_{s}_{p}.png"))
             distribution_plot.savefig(Path(f"../figures/distribution_{s}_{p}.png"))
             items = [summary, text]
-            dump(items, Path(f"../MCdata/mcItems_{s}_{p}.joblib"))
+            filepath = Path(f"../MCdata/mcItems_{s}_{p}.joblib")
+            with open(filepath, 'wb') as file:
+                dump(items, file)
         
 
 def save_models():
@@ -340,23 +350,21 @@ def save_models():
     # #### loading train/test data for reduced features and defining the models
 
 
-
-
     # load X_train_reduced and X_test_reduced
-    X_train_reduced_conservative = pd.read_csv(Path("../modeling/data/X_train_reduced_conservative.csv"), index_col="Unnamed: 0", parse_dates=True, infer_datetime_format=True)
-    X_test_reduced_conservative = pd.read_csv(Path("../modeling/data/X_test_reduced_conservative.csv"), index_col="Unnamed: 0", parse_dates=True, infer_datetime_format=True)
+    X_train_full_conservative = pd.read_csv(Path("../modeling/data/X_train_full_conservative.csv"), index_col="Unnamed: 0", parse_dates=True, infer_datetime_format=True)
+    X_test_full_conservative = pd.read_csv(Path("../modeling/data/X_test_full_conservative.csv"), index_col="Unnamed: 0", parse_dates=True, infer_datetime_format=True)
 
     X_train_reduced_balanced = pd.read_csv(Path("../modeling/data/X_train_reduced_balanced.csv"), index_col="Unnamed: 0", parse_dates=True, infer_datetime_format=True)
     X_test_reduced_balanced = pd.read_csv(Path("../modeling/data/X_test_reduced_balanced.csv"), index_col="Unnamed: 0", parse_dates=True, infer_datetime_format=True)
 
-    X_train_reduced_growth = pd.read_csv(Path("../modeling/data/X_train_reduced_growth.csv"), index_col="Unnamed: 0", parse_dates=True, infer_datetime_format=True)
-    X_test_reduced_growth = pd.read_csv(Path("../modeling/data/X_test_reduced_growth.csv"), index_col="Unnamed: 0", parse_dates=True, infer_datetime_format=True)
+    X_train_full_growth = pd.read_csv(Path("../modeling/data/X_train_full_growth.csv"), index_col="Unnamed: 0", parse_dates=True, infer_datetime_format=True)
+    X_test_full_growth = pd.read_csv(Path("../modeling/data/X_test_full_growth.csv"), index_col="Unnamed: 0", parse_dates=True, infer_datetime_format=True)
 
-    X_train_reduced_aggressive = pd.read_csv(Path("../modeling/data/X_train_reduced_aggressive.csv"), index_col="Unnamed: 0", parse_dates=True, infer_datetime_format=True)
-    X_test_reduced_aggressive = pd.read_csv(Path("../modeling/data/X_test_reduced_aggressive.csv"), index_col="Unnamed: 0", parse_dates=True, infer_datetime_format=True)
+    X_train_full_aggressive = pd.read_csv(Path("../modeling/data/X_train_full_aggressive.csv"), index_col="Unnamed: 0", parse_dates=True, infer_datetime_format=True)
+    X_test_full_aggressive = pd.read_csv(Path("../modeling/data/X_test_full_aggressive.csv"), index_col="Unnamed: 0", parse_dates=True, infer_datetime_format=True)
 
-    X_train_reduced_alternative = pd.read_csv(Path("../modeling/data/X_train_reduced_alternative.csv"), index_col="Unnamed: 0", parse_dates=True, infer_datetime_format=True)
-    X_test_reduced_alternative = pd.read_csv(Path("../modeling/data/X_test_reduced_alternative.csv"), index_col="Unnamed: 0", parse_dates=True, infer_datetime_format=True)
+    X_train_full_alternative = pd.read_csv(Path("../modeling/data/X_train_full_alternative.csv"), index_col="Unnamed: 0", parse_dates=True, infer_datetime_format=True)
+    X_test_full_alternative = pd.read_csv(Path("../modeling/data/X_test_full_alternative.csv"), index_col="Unnamed: 0", parse_dates=True, infer_datetime_format=True)
 
     #load y_train and y_test
     y_train_conservative = pd.read_csv(Path("../modeling/data/y_train_conservative.csv"), index_col="Unnamed: 0", parse_dates=True, infer_datetime_format=True)
@@ -380,6 +388,7 @@ def save_models():
 
     svc_model = SVC(random_state=42, max_iter=1000, kernel='linear', C=0.5, probability=True)
     gaussian_model = GaussianNB(var_smoothing=1.0, priors=[.3, 0.7])
+    rf_model = RandomForestClassifier(n_estimators=1000, max_depth=40, min_samples_split=50, min_samples_leaf=20, max_features=None, bootstrap=True, criterion='entropy', min_impurity_decrease=0.01, class_weight={0: 1, 1: 5}, oob_score=True)
 
 
     # #### Define standard scaler to use in model pipelines
@@ -392,65 +401,33 @@ def save_models():
 
     # ## Aggressive
     # 
+    np.random.seed(8171)
 
 
 
-
-    pipeline = Pipeline([('scaler', scaler), ('model', svc_model)])
-    pipeline.fit(X_train_reduced_aggressive, y_train_aggressive)
-    dump(pipeline,Path("../modeling/saved_models/aggressive.joblib"))
+    pipeline = Pipeline([('scaler', scaler), ('model', rf_model)])
+    pipeline.fit(X_train_full_aggressive, y_train_aggressive)
+    
+    filepath = Path("../modeling/saved_models/aggressive.joblib")
+    with open(filepath, 'wb') as file:
+        dump(pipeline, file)
 
 
     # ## Alternative
-
-
+    np.random.seed(8171)
 
 
     #update to nn
-    # pipeline = Pipeline([('scaler', scaler), ('model', gaussian_model)])
-    # pipeline.fit(X_train_reduced_alternative, y_train_alternative)
-    # dump(pipeline,Path("./saved_models/alternative.joblib"))
+    pipeline = Pipeline([('scaler', scaler), ('model', rf_model)])
+    pipeline.fit(X_train_full_alternative, y_train_alternative)
+    
+    filepath = Path("../modeling/saved_models/alternative.joblib")
+    with open(filepath, 'wb') as file:
+        dump(pipeline,file)
 
 
 
 
-    # Create the scaler instance
-    X_scaler = StandardScaler()
-
-    # Fit the scaler
-    X_scaler.fit(X_train_reduced_alternative)
-
-    # Scale the data
-    X_train_reduced_alternative_scaled = X_scaler.transform(X_train_reduced_alternative)
-    X_test_reduced_alternative_scaled = X_scaler.transform(X_test_reduced_alternative)
-    number_input_features = 7
-    hidden_nodes_layer1 = 8
-    hidden_nodes_layer2 = 3
-    activation_1 = 'relu'
-    activation_2 = 'relu'
-    lr = 0.001
-
-    # Create a sequential neural network model
-    nn_alternative = Sequential()
-
-    # Add the first hidden layer
-    nn_alternative.add(Dense(units=hidden_nodes_layer1, input_dim=number_input_features, activation=activation_1))
-
-    # Add the second hidden layer
-    nn_alternative.add(Dense(units=hidden_nodes_layer2, activation=activation_2))
-
-    # Add the output layer
-    nn_alternative.add(Dense(units=1, activation="sigmoid"))
-
-    # Compile the model 
-    # Set the parameters as mean_squared_error, adam, and accuracy.
-    nn_alternative.compile(loss="binary_crossentropy", optimizer=tf.keras.optimizers.Adam(learning_rate=lr), metrics=["accuracy"])
-
-    # Fit the model
-    deep_net_alternative_model = nn_alternative.fit(X_train_reduced_alternative_scaled, y_train_alternative, epochs=100, verbose=0)
-
-
-    nn_alternative.save(Path("../modeling/saved_models/alternative.h5"))
 
 
     # ## Balanced
@@ -458,29 +435,122 @@ def save_models():
 
 
 
-    pipeline = Pipeline([('scaler', scaler), ('model', gaussian_model)])
-    pipeline.fit(X_train_reduced_balanced, y_train_balanced)
-    dump(pipeline, Path("../modeling/saved_models/balanced.joblib"))
+#     pipeline = Pipeline([('scaler', scaler), ('model', rf_model)])
+#     pipeline.fit(X_train_full_balanced, y_train_balanced)
+#     dump(pipeline, Path("../modeling/saved_models/balanced.joblib"))
 
+    
+    tf.keras.utils.set_random_seed(42)
+    
+       # Create the scaler instance
+    X_scaler = StandardScaler()
+
+    # Fit the scaler
+    X_scaler.fit(X_train_reduced_balanced)
+
+    # Scale the data
+    X_train_reduced_balanced_scaled = X_scaler.transform(X_train_reduced_balanced)
+    X_test_reduced_balanced_scaled = X_scaler.transform(X_test_reduced_balanced)
+    number_input_features = 7
+    hidden_nodes_layer1 = 32
+    hidden_nodes_layer2 = 3
+    activation_1 = 'tanh'
+    activation_2 = 'tanh'
+    lr = 0.01
+
+    # Create a sequential neural network model
+    nn_balanced = Sequential()
+
+    # Add the first hidden layer
+    nn_balanced.add(Dense(units=hidden_nodes_layer1, input_dim=number_input_features, activation=activation_1))
+
+    # Add the second hidden layer
+    nn_balanced.add(Dense(units=hidden_nodes_layer2, activation=activation_2))
+
+    # Add the output layer
+    nn_balanced.add(Dense(units=1, activation="sigmoid"))
+
+    # Compile the model 
+    # Set the parameters as mean_squared_error, adam, and accuracy.
+    nn_balanced.compile(loss="binary_crossentropy", optimizer=tf.keras.optimizers.Adam(learning_rate=lr), metrics=["accuracy"])
+
+    # Fit the model
+    deep_net_balanced_model = nn_balanced.fit(X_train_reduced_balanced_scaled, y_train_balanced, epochs=100, verbose=0)
+
+
+    nn_balanced.save(Path("../modeling/saved_models/balanced.h5"))
 
     # ## Conservative
 
-
+    np.random.seed(8171)
 
 
     pipeline = Pipeline([('scaler', scaler), ('model', svc_model)])
-    pipeline.fit(X_train_reduced_conservative, y_train_conservative)
-    dump(pipeline, Path("../modeling/saved_models/conservative.joblib"))
+    pipeline.fit(X_train_full_conservative, y_train_conservative)
+    
+    filepath = Path("../modeling/saved_models/conservative.joblib")
+    with open(filepath, 'wb') as file:
+        dump(pipeline, file)
+
+
+
+#     # Create the scaler instance
+#     X_scaler = StandardScaler()
+
+#     # Fit the scaler
+#     X_scaler.fit(X_train_reduced_conservative)
+
+#     # Scale the data
+#     X_train_reduced_conservative_scaled = X_scaler.transform(X_train_reduced_conservative)
+#     X_test_reduced_conservative_scaled = X_scaler.transform(X_test_reduced_conservative)
+#     number_input_features = 7
+#     hidden_nodes_layer1 = 36
+#     hidden_nodes_layer2 = 3
+#     activation_1 = 'tanh'
+#     activation_2 = 'tanh'
+#     lr = 0.01
+
+#     # Create a sequential neural network model
+#     nn_conservative = Sequential()
+
+#     # Add the first hidden layer
+#     nn_conservative.add(Dense(units=hidden_nodes_layer1, input_dim=number_input_features, activation=activation_1))
+
+#     # Add the second hidden layer
+#     nn_conservative.add(Dense(units=hidden_nodes_layer2, activation=activation_2))
+
+#     # Add the output layer
+#     nn_conservative.add(Dense(units=1, activation="sigmoid"))
+
+#     # Compile the model 
+#     # Set the parameters as mean_squared_error, adam, and accuracy.
+#     nn_conservative.compile(loss="binary_crossentropy", optimizer=tf.keras.optimizers.Adam(learning_rate=lr), metrics=["accuracy"])
+
+#     # Fit the model
+#     deep_net_conservative_model = nn_conservative.fit(X_train_reduced_conservative_scaled, y_train_conservative, epochs=100, verbose=0)
+
+
+#     nn_conservative.save(Path("../modeling/saved_models/conservative.h5"))
 
 
     # ## Growth
 
+    np.random.seed(8171)
+
+
+    pipeline = Pipeline([('scaler', scaler), ('model', rf_model)])
+    pipeline.fit(X_train_full_growth, y_train_growth)
+    
+    filepath = Path("../modeling/saved_models/growth.joblib")
+    with open(filepath, 'wb') as file:
+        dump(pipeline, file)
 
 
 
-    pipeline = Pipeline([('scaler', scaler), ('model', gaussian_model)])
-    pipeline.fit(X_train_reduced_growth, y_train_growth)
-    dump(pipeline, Path("../modeling/saved_models/growth.joblib"))
+
+
+
+   
 
     
 
@@ -504,18 +574,18 @@ def create_all_data():
     create_mc_info()
 
 def create_data_only():
-    print("creating ML prediction data\n")
-    create_ml_prediction_data()
-    print("creating S&P 500 historical data\n")
-    create_market_data()
-    print("creating train/test datasets for ML modeling\n")
-    create_train_test()
-    print("creating strategy performance data\n")
-    create_performance_data()
-    print("creating MC prediction data\n")
-    MC_create_ml_prediction_data()
-    print("creating MC performance data\n")
-    MC_create_performance_data()
+    # print("creating ML prediction data\n")
+    # create_ml_prediction_data()
+    # print("creating S&P 500 historical data\n")
+    # create_market_data()
+    # print("creating train/test datasets for ML modeling\n")
+    # create_train_test()
+    # print("creating strategy performance data\n")
+    # create_performance_data()
+    # print("creating MC prediction data\n")
+    # MC_create_ml_prediction_data()
+    # print("creating MC performance data\n")
+    # MC_create_performance_data()
     print("creating MC graphs\n")
     create_mc_info()
 
