@@ -173,7 +173,7 @@ The best performers for each model type were then compared against each other, a
 ## Contributors
 
 [Ahmad Takatkah](https://github.com/vcpreneur)
-[Lourdes Dominguez Begoa](https://github.com/LourdesDB)
+[Lourdes Dominguez Bengoa](https://github.com/LourdesDB)
 [Patricio Gomez](https://github.com/patogogo)
 [Lovedeep Singh](https://github.com/LovedeepSingh89)
 [Thomas L. Champion](https://github.com/tlchampion)
