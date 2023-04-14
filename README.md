@@ -85,7 +85,7 @@ panel serve mywealthplan.py
 ```
 This will initiate a local server. Please review the output for the server address, which may then be accessed using the browser of your choice.
 
-<img src="images/serving.png" height=60%, width=60%>
+<img src="Images/serving.png" height=60%, width=60%>
 
 
 To run the jupyter notebook (```mywealthplan.ipynb```) begin by launching jupyter lab in the correct python environment:
@@ -104,27 +104,27 @@ After Jupyter Lab is running, open the ```mywealthplan.ipynb``` file from the si
 
 The left-hand portion of the dashboard consists of a six-question risk tolerance questionnaire. Once the questions are answered and the submit button is clicked the a risk tolerance score will be calculated for the user and they will be assigned a risk tolerance category. 
 
-<img src="images/Introduction.png" height=60% width=60%>
+<img src="Images/Introduction.png" height=60% width=60%>
 
 Once determined, the risk tolerance category is used to assign the user to one of five predetermined portfolios that vary in their overall level of investment risk. Details on the assigned portfolio are provided in the tabs found in the upper-right-hand portion of the dashboard. The following information will presented to the user:
 
-<img src="images/Profile.png" height=60% width=60%>
+<img src="Images/Profile.png" height=60% width=60%>
 
 Then the client can go to the 'Past Performance' tab where a deeper analysis of past performance and Benchmark vs Market are provided for their chosen portfolio:
 
-<img src="images/past_perf.png" height=60% width=60%>
+<img src="Images/past_perf.png" height=60% width=60%>
 
 On the next tab, a 10 years Monte Carlo Simulation can be launched in order to get a lower and upper range for the expected performance with a 95% confidence interval:
 
-<img src="images/simulations.png" height=60% width=60%>
+<img src="Images/simulations.png" height=60% width=60%>
 
 Lastly, on the **'Algortihmic Trading' tab**, the user can select a Trading Strategy and a backtest of it's performance will be displayed (vs the plain 'buy and hold' Portfolio and vs the S&P500 as Market reference). The tool will also choose the best performing ML Model among 7 different models (and 11 parameter variations within each of them).
 
-<img src="images/strategies.png" height=100% width=100%>
+<img src="Images/strategies.png" height=100% width=100%>
 
 It will also show Monte Carlo simulations for the strategy:
 
-<img src="images/strategies_montecarlo.png" height=60% width=60%>
+<img src="Images/strategies_montecarlo.png" height=60% width=60%>
 
 With all this information, the Client can clearly see both the past and predicted performance of the base Portfolio (buy and hold) assigned to their risk-aversion level, its performance if they add an 'enhancing' trading strategy, and the benchmark/comparison against a widely used Market reference.
 
