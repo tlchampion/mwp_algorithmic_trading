@@ -12,14 +12,14 @@ Prepared Train/Test datasets were loaded from saved files. Please see the [main 
 
 **2. Model Testing**
 
-Machine Learning models were built using seven different algorithms from the Scikit-Learn library:
+An initial set of Machine Learning models were built using six different packages from the Scikit-Learn library:
+
 * Bagging Classifier
 * GaussianNB
 * Logistic Regression
 * Random Forest
 * SVM Classifier
 * AdaBoost Classifier
-* LightGBM
 
 As the initial step in the building of all models a ```StandardScaler``` was instantiated. 
 
@@ -28,7 +28,7 @@ Each model class had a minimum of 10-plus models built using different parameter
 **Bagging Classifier**
 
 | model   | Base Estimator  | m_estimators | max_samples | max_features | bootstrap | oob_score | random_state |
-|:---------:|:-----------------:|:--------------:|:-------------:|:--------------:|:-----------:|:------------:|:
+|:---------:|:-----------------:|:--------------:|:-------------:|:--------------:|:-----------:|:------------:|
 | model1  | base_classifier | 200          | 0.8         | 0.5          | True      | True      | 42           |
 | model2  | base_classifier | 50           | 0.8         | 0.5          | True      | True      | 42           |
 | model3  | base_classifier | 100          | 0.8         | 0.5          | True      | True      | 42           |
@@ -42,7 +42,7 @@ Each model class had a minimum of 10-plus models built using different parameter
 | model11 | base_classifier | 100          | 0.8         | 0.5          | True      | False     | 42           |
 
 
-**GaussianNB**                                              |
+**GaussianNB**                                             
 
 | model   | var_smoothing | priors       |
 |:---------:|:---------------:|:--------------:|
@@ -60,12 +60,10 @@ Each model class had a minimum of 10-plus models built using different parameter
 
 
 
-
-
 **Logistic Regression**
 
 | model   | random_state | max_iter | solver    | penatly    | l1_ratio |
-|:---------:|:--------------:|:----------:|:-----------:|:-------------:|:
+|:---------:|:--------------:|:----------:|:-----------:|:-------------:|
 | model1  | 42           | 10000    | saga      | elasticnet | 0.1      |
 | model2  | 42           | 10000    | saga      | elasticnet | 0.3      |
 | model3  | 42           | 10000    | saga      | elasticnet | 0.5      |
@@ -79,7 +77,7 @@ Each model class had a minimum of 10-plus models built using different parameter
 | model11 | 42           | 10000    | sag       | None       |          |
 
 
-**Random Forest**                                                       |
+**Random Forest**                                                       
 
 | model   | n_estimators | max_depth | min_samples_split | min_samples_leaf | max_features | boostrap | criterion | min_impurity_decrease | class_weight       | oob_score |
 |:-------:|:------------:|:---------:|:-----------------:|:----------------:|:------------:|:--------:|:---------:|:---------------------:|:------------------:|:---------:|
@@ -129,21 +127,6 @@ Each model class had a minimum of 10-plus models built using different parameter
 | model10 | GradientBoostingClassifier(max_depth=10) | 150          | 0.1           | SAMME     |
 | model11 | LinearSVC(max_iter=10000)                | 150          | 0.05          | SAMME     |
 
-
-
-| **LoghtGBM**                                                                                                          |
-|-----------------------------------------------------------------------------------------------------------------------|
-| model1 = lgb.LGBMClassifier(boosting_type='gbdt', num_leaves=31, max_depth=-1, learning_rate=0.1, n_estimators=100)   |
-| model2 = lgb.LGBMClassifier(boosting_type='dart', num_leaves=63, max_depth=5, learning_rate=0.01, n_estimators=50)    |
-| model3 = lgb.LGBMClassifier(boosting_type='goss', num_leaves=15, max_depth=10, learning_rate=0.05, n_estimators=200)  |
-| model4 = lgb.LGBMClassifier(boosting_type='gbdt', num_leaves=127, max_depth=3, learning_rate=0.5, n_estimators=150)   |
-| model5 = lgb.LGBMClassifier(boosting_type='dart', num_leaves=31, max_depth=-1, learning_rate=0.1, n_estimators=50)    |
-| model6 = lgb.LGBMClassifier(boosting_type='goss', num_leaves=63, max_depth=5, learning_rate=0.01, n_estimators=100)   |
-| model7 = lgb.LGBMClassifier(boosting_type='gbdt', num_leaves=15, max_depth=10, learning_rate=0.05, n_estimators=200)  |
-| model8 = lgb.LGBMClassifier(boosting_type='dart', num_leaves=127, max_depth=3, learning_rate=0.5, n_estimators=150)   |
-| model9 = lgb.LGBMClassifier(boosting_type='goss', num_leaves=31, max_depth=-1, learning_rate=0.1, n_estimators=50)    |
-| model10 = lgb.LGBMClassifier(boosting_type='gbdt', num_leaves=63, max_depth=5, learning_rate=0.01, n_estimators=100)  |
-| model11 = lgb.LGBMClassifier(boosting_type='dart', num_leaves=15, max_depth=10, learning_rate=0.05, n_estimators=200) |
 
 
 
