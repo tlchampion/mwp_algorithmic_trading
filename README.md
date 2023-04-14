@@ -7,10 +7,10 @@ In that **initial project**, a Portfolio Selection Tool was created as a dashboa
 
 In this **second phase** of the project, the user has access to a new tool that allows them to:
 
-* Choose amoung different Trading Strategies that enhance the Portfolio performance beyond the base 'buy and hold' strategy.
+* Choose amoung different Trading Strategies that enhance the Portfolio performance beyond the base 'buy and hold' strategy
 * Backtest the performance of the strategy of choice and benchmark it against a Market reference.
-* Run the Montecarlo simulation for expected future returns.
-* Get a more customized prediction based on a ML model selected by the tool among many as the most accurate and best performing one.
+* Run the Monte Carlo simulation for expected future returns
+* Get a more customized prediction based on a ML model selected by the tool among many as the most accurate and best performing one
 
 For this second Project, a full description of the analysis process and coding has been created in the [Data](https://github.com/tlchampion/mwp_algorithmic_trading/blob/main/data/README.md) and [Modeling](https://github.com/tlchampion/mwp_algorithmic_trading/blob/main/modeling/README.md) specific README files.
 
@@ -29,9 +29,13 @@ Visualizations are provided by the [Bokeh](https://bokeh.org), [hvPlot](https://
 
 Details on asset performance are retrieved using the [Yahoo Finance](https://finance.yahoo.com) API.
 
+Performance indicators are calculated using the [Pandas TA](https://twopirllc.github.io/pandas-ta/#dataframe-methods) library.
+
 The [Pandas](https://pandas.pydata.org) and [Numpy](https://numpy.org) libraries are used to work with the asset data retrieved from the API.
 
-For the Machine Learning Models training, testing and selection, the [scikit-learn](https://scikit-learn.org/stable/index.html) library is used.
+For the Machine Learning Models training, testing and selection, the [scikit-learn](https://scikit-learn.org/stable/index.html) and [TensorFlow](https://www.tensorflow.org) libraries are used.
+
+Hyperparameter tuning of the TensorFlow models was accomplished using [KerasTuner](https://keras.io/keras_tuner/).
 
 
 ---
@@ -49,8 +53,8 @@ The following python packages must be installed to run the application locally:
 * numpy
 * hvplot
 * tensorflow
+* keras-tuner
 * pandas_ta
-* questionary
 * jupyterlab (only if the .ipynb file is used. running the .py file does not require jupyterlab)
 
 These packages may be individually installed into the environment of your choice or you may create a new conda environment using the included environment.yml file. 
@@ -64,37 +68,41 @@ If you prefer using pip, the included requirements.txt file may be used to insta
 ```
 pip install -r requirements.txt
 ```
-### Data Creation
+### Data Refresh
 
-Prior to running the application it is necessary to create all the datasets and machine learning models required for the active investment strategy. This can be accomplished by running the create_data_files.py script found in the scripts directory.
+Rather than continually make API calls and perform calcuations when data only updates on an at most daily basis, the application relies on preprepared data and images. As such, it is recommended to refresh these data sets and images on a periodic basis,such as weekly or monthly, in order to present more current and relevant information.
+
+You may refresh the data at anytime by running the script provided in the scripts directory:
 
 ```
 python create_data_files.py
 ```
 
-You will then be promtped to either create all data files and the machine learning models or just to create all data.  If you have already created the machine learning models you may select the data only option in order to refresh your local datasets with the most current data available.
+Do the the volume of data and images being prepared, this process can take some time so please be patient when choosing to refresh.
+
+---
 
 ## Launching
 
-The MyWealthPlan Investment Platform can be run from the jupyter notebook or by using the included python script. In either case, once launched a [Panel](https://panel.holoviz.org/index.html) dashboard will be displayed.
+The MyWealthPath Investment Platform can be run from the jupyter notebook or by using the included python script. In either case, once launched a [Panel](https://panel.holoviz.org/index.html) dashboard will be displayed.
 
-To run the included python script (```mywealthplan.py``` issue the following command after switching to the correct python environment:
+To run the included python script (```mywealthpath.py``` issue the following command after switching to the correct python environment:
 
 ```
-panel serve mywealthplan.py
+panel serve mywealthpath.py
 ```
 This will initiate a local server. Please review the output for the server address, which may then be accessed using the browser of your choice.
 
 <img src="Images/serving.png" height=60%, width=60%>
 
 
-To run the jupyter notebook (```mywealthplan.ipynb```) begin by launching jupyter lab in the correct python environment:
+To run the jupyter notebook (```mywealthpath.ipynb```) begin by launching jupyter lab in the correct python environment:
 
 ```
 jupyter lab
 ```
 
-After Jupyter Lab is running, open the ```mywealthplan.ipynb``` file from the sidebar and then use Run > Run All Cells from the menu.
+After Jupyter Lab is running, open the ```mywealthpath.ipynb``` file from the sidebar and then use Run > Run All Cells from the menu.
 
 
 ---
@@ -133,7 +141,7 @@ With all this information, the Client can clearly see both the past and predicte
 
 ## Contributors
 
-[Ahmad Takatkah](https://github.com/vcpreneur)  
+[Ahmad Takatkah](https://github.com/vcpreneur)<sup>1</sup>     
 [Lourdes Dominguez Bengoa](https://github.com/LourdesDB)  
 [Patricio Gomez](https://github.com/patogogo)  
 [Lovedeep Singh](https://github.com/LovedeepSingh89)  
@@ -170,4 +178,7 @@ The information provided through this application is for information and educati
 It is not intended to be, nor should it be used as, investment advice. 
 Seek a duly licensed professional for investment advice.
 
+---
 
+
+<font size = "1"> 1 Ahmad contributed to the initial design of the platform, but was unavailable at the the time the algorithmic tab was added </font>

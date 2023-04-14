@@ -4,13 +4,15 @@ The following process has been followed to test and select the most suitable Mod
 
 
 
-**1. Data Loading**
+## 1. Data Loading
 
 Prepared Train/Test datasets were loaded from saved files. Please see the [main section]() for details on the preparation of the datasets.
 
 
 
-**2. Model Testing**
+## 2. Model Training
+
+### Sci-Kit Learn Modeling
 
 An initial set of Machine Learning models were built using six different packages from the Scikit-Learn library:
 
@@ -130,49 +132,114 @@ Each model class had a minimum of 10-plus models built using different parameter
 
 
 
-For each ML algorithm a loop structure was used to build/evaluate each of the 10-plus models using the following steps, once for the full feature datasets and once for the reduced features datasets:
+For each ML algorithm a loop structure was used to build/evaluate each of the 10-plus models using the following steps. The loop was repeated twice, once for the full feature datasets and once for the reduced features datasets:
 
 * A pipeline was instantiated using ```SciKit-Learn Pipeline``` consisting of the ```StandardScaler``` and the model
 * The ```X_train``` data was fit to the pipeline
 * The pipeline was used to predict the ```X_test``` data
-* A classification report using ```sklearn.metrics.classification_report``` was generated
-* The classification reports for the full feature  and the reduced feature data sets were combined into one dataframe
+* F1-score and AUC-ROC score were calculated to determine the predictive power of the model
+* The evalution metric scores for all configurations of the model were combined into one dataframe
+
+
+### TensorFlow Modeling
+
+ A Deep Neural Network consisting of two Dense layers was designed with the intent of predicting portfolio performance. The following steps were involved in the training of the neural network. The steps were repeated twice, once for the full features dataset and once for the reduced features dataset:
+
+A loop was used to perform the following steps once per portfolio:
+
+* StandardScaler() defined and fit to training data
+* Training data transformed by scaler
+* Test data transformed by scaler
+* Keras-Tuner Hypberband tuner was used to find the optimal combination of the following parameters:
+    * Number of nodes for Dense layer 1
+    * Number of nodes for Dense layer 2
+    * Activation function for hidden layer 1
+    * Activation function for hidden layer 2
+    * learning rate for the optimizer
+
+    The overall model parameters were:
+
+    |                   | parameter                           |
+    |-------------------|-------------------------------------|
+    | Layer1 Units      | determined by hyperparameter tuning |
+    | Layer2 Units      | determined by hyperparameter tuning |
+    | Layer1 Activation | determined by hyperparameter tuning |
+    | Layer2 Activation | determined by hyperparameter tuning |
+    | Optimizer         | Adam                                |
+    | Learning Rate     | determined by hyperparameter tuning |
+    | loss function     | Binary Crossentropy                 |
+    | metrics           | Accuracy                            |
+    | epochs            | 100                                 |
+
+    An early stopping callback was used to stop trainig based upon the val_loss function not changing in 5 epochs
+    The Hyperband tuner itself was defined with max_epochs of 100
+
+* The optimal set of parameters for each portfolio were saved to a dictionary
+* Use optimal parameters to train one model per portfolio using train dataset
+* Make predictions using test dataset
+* Calculate F1 Score and AUC-ROC score
+* Combine models evaluation score into table with those from other models for final review
+
+
+
+
+* F1-score and AUC-ROC score were calculated to determine the predictive power of the model
+* The evalution metric scores for all configurations of the model were combined into one dataframe
+* The model with the 'best' performance from all the model configurations was chosen
 * Once the model with the optimal performance was selected for each model, that metrics for that model were saved to a ```csv file```.
 * All csv files for metrics were then loaded and combined into one dataframe for review. **The optimal model for each individual portfolio class was then selected.**
 * For each portfolio class, the optimal model was refit and saved for use in creating performance datasets for dashboard usage.
 
 
 
-**3. Model Performance/Selection**
+## 3. Model Performance/Selection
 
-Models were evaluated using an ROC-AUC score and F1 score. 
+Models were evaluated using an ROC-AUC score and F1 score, with the F1 score being the primary metric.
 
-For each model type the best model was determined using a voting-style method, where each highest score for a metric counted as one vote. 
+There was a two-tiered decision process to find the best model per portfolio.
 
-The best performers for each model type were then compared against each other, and the best model for each portfolio class was selected using the same voting-style method.
+The first tier involved the Sci-Kit Learn models only, with the intent to determine which of the set of paramters had the best performance. The hyperparameter tuning the TensorFlow model underwent served this same purpose. The evaluation metrics for each model type were compiled into one comprehensive table for review. The model choses as the best overall model then had it's metrics saved to a csv file for use in the second tier.
 
----
+The first tier metrics for each model type are shown below:
 
-## Contributors
+### Bagging Classifier
+<img src="../Images/bagging_tier1metrics.png" height=70% width=70%>
 
-[Ahmad Takatkah](https://github.com/vcpreneur)
-[Lourdes Dominguez Bengoa](https://github.com/LourdesDB)
-[Patricio Gomez](https://github.com/patogogo)
-[Lovedeep Singh](https://github.com/LovedeepSingh89)
-[Thomas L. Champion](https://github.com/tlchampion)
+### GaussianNB
+<img src="../Images/gaussian_tier1metrics.png" height=70% width=70%>
 
----
+### Logistic Regression
 
-## License
+<img src="../Images/lr_tier1metrics.png" height=70% width=70%>
 
-License information can be found in the included LICENSE file.
+### Random Forest
+<img src="../Images/rf_tier1metrics.png" height=70% width=70%>
 
----
+### SVM
+<img src="../Images/svm_tier1metrics.png" height=70% width=70%>
 
-## Disclaimer
+### Adaboost
+<img src="../Images/adaboost_tier1metrics.png" height=70% width=70%>
 
-The information provided through this application is for information and educational purposes only. 
-It is not intended to be, nor should it be used as, investment advice. 
-Seek a duly licensed professional for investment advice.
+Once the best set of parameters were determined, the metrics for all models were compiled into one table for review to select the best model type per portfolio. The metrics for this second tier selection process were:
+
+<img src="../Images/tier2metrics.png" height=50% width=50%>
+
+
+
+The final selection of models per portfolio was:
+
+| Portfolio                                              | Model Type    | Paramters                                                                                                                                                                                                                              | Dataset          |
+|--------------------------------------------------------|---------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------|
+| Aggressive<br> Alternative<br> Conservative<br> Growth | Random Forest | n_estimators=1000<br> max_depth=40<br>  min_samples_split=50<br> min_samples_leaf=20<br> max_features=None<br> bootstrap=True<br> criterion='entropy'<br> min_impurity_decrease=0.01<br>  class_weight={0: 1, 1: 5}<br> oob_score=True | Full Features    |
+| Balanced                                               | TensorFlow    | Layer 1 Units = 32<br> Layer 2 Units = 3<br> Layer 1 Activation = tanh<br> Layer 2 Activation = tanh<br> Learning Rate = 0.01                                                                                                          | Reduced Features |
+
+
+
+### 4. Model Persistence
+
+Once the optimal model parameters were determined for each portfolio a final model was build for each and saved to disk using joblib dump for the Sci-Kit Learn models and saving as a HDF5 model for the TensorFlow models.
+
+These saved files were then available for making predictions on the reserved predictions datasets for the generation of buy/sell signals. 
 
 
