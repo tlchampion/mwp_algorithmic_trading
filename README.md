@@ -134,7 +134,7 @@ With all this information, the Client can clearly see both the past and predicte
 ## Contributors
 
 [Ahmad Takatkah](https://github.com/vcpreneur)  
-[Lourdes Dominguez Begoa](https://github.com/LourdesDB)  
+[Lourdes Dominguez Bengoa](https://github.com/LourdesDB)  
 [Patricio Gomez](https://github.com/patogogo)  
 [Lovedeep Singh](https://github.com/LovedeepSingh89)  
 [Thomas L. Champion](https://github.com/tlchampion)  
