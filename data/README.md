@@ -68,7 +68,7 @@ The trading strategy of choice and the predictions by the best performing Model 
 ## Contributors
 
 [Ahmad Takatkah](https://github.com/vcpreneur)
-[Lourdes Dominguez Begoa](https://github.com/LourdesDB)
+[Lourdes Dominguez Bengoa](https://github.com/LourdesDB)
 [Patricio Gomez](https://github.com/patogogo)
 [Lovedeep Singh](https://github.com/LovedeepSingh89)
 [Thomas L. Champion](https://github.com/tlchampion)
