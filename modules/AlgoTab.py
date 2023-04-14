@@ -81,9 +81,9 @@ This learned information is then used by the model to make predictions about fut
 # define introduction/instructions for tab
 def get_intro():
     text = """
-<p><h1>Welcome to MyWealthPlan Portfolio Alogorithmic Trading</h1></p>
+<p><h1>Welcome to MyWealthPath Portfolio Alogorithmic Trading</h1></p>
 
-<p>In addition to a &lsquo;Buy and Hold&rsquo; strategy, MyWealthPlan offers an active portfolio investment strategy that monitors daily market activity and places buy/sell orders based upon your current position in the portfolio and the current market trend.</p>
+<p>In addition to a &lsquo;Buy and Hold&rsquo; strategy, MyWealthPath offers an active portfolio investment strategy that monitors daily market activity and places buy/sell orders based upon your current position in the portfolio and the current market trend.</p>
 <h2>Our Strategy</h2>
 <p> Our active investment strategy requires you to make an initial investment into your chosen portfolio which will become your base investment. In addition, we require you to fund a cash reserve account. The funds from the cash reserve account will be used to purchase additional shares of your portfolio and will recieve any funds from the selling of shares.</p>
 

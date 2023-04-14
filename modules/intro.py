@@ -2,7 +2,7 @@
 
 def get_intro():
     text = """\
-    ## Welcome to the MyWealthPlan Portfolio Selection Tool
+    ## Welcome to the MyWealthPath Portfolio Selection Tool
     
     ### To begin, please complete the Risk Analysis Survey found in the left-hand side panel. Once you have selected your answers click on the 'submit' button.
 
@@ -45,7 +45,7 @@ Seek a duly licensed professional for investment advice.
     
     ----
     
-    © 2023 MyWealthPath.
+    © 2023 MyWealthPath
     
     """
     
