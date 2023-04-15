@@ -1,9 +1,30 @@
 # Contents
-This folder contains maintenance scripts that should be run on a periodic basis to ensure the optimal functioning of the application.  
 
-# Script Instructions
+This folder contains: 
 
-### create_peformance_data.py
-This script will refresh the data files containing the historical performance information for each of the five portfolio classes. For each portfolio class a data file will be created for each strategy offered for that portfolio class.
+* a maintenance script that should be run on a periodic basis to ensure the optimal functioning of the application 
+* a script to regenerate the machine learing models for making buy/sell predictions
 
-This script should be run on a weekly to monthly basis to ensure the most up-to-date data is available for performance evaluations.
+
+## Usage Instructions
+
+### Data Refresh
+
+You may refresh the data at anytime by running the script:
+
+```
+python create_data_files.py
+```
+
+Do the the volume of data and images being prepared, this process can take some time so please be patient when choosing to refresh.
+
+
+### Model Retrainging
+
+To retrain and save the machine learning models please run the save_best_models.py script:
+
+```
+python save_best_models.py
+```
+
+Alternatively, you may run the save_best_models.ipynb notebook in jupyter lab

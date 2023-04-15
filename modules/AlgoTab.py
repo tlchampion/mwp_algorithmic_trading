@@ -13,6 +13,8 @@ import modules.algorithmic_functions as af
 The contents of this file define what is displayed on the 'Algorithmic Trading' tab
 """
 
+# setup the values available in the menu dropdown for each portfolio
+
 strategies_by_portfolio = {"conservative": [['Simple Moving Average (SMA)','sma'],
                                             ['Moving Average Convergance/Divergence', 'macd'],
                                             ['Relative Strength Index (RSI)', 'rsi'],
@@ -45,6 +47,7 @@ strategies_by_portfolio = {"conservative": [['Simple Moving Average (SMA)','sma'
                                            ['Machine Learning Model', 'ml']]
                           }
 
+# define the descriptions for the strategies
 
 strategies_info = {"sma": ['SMA_signal',"""<p>The Simple Moving Average (SMAx) is the average of a security's price over x days.</p>
 
@@ -100,6 +103,7 @@ def get_intro():
 """
     return text
 
+
 # return details related to the trading strategies available based upon the portfolio class
 def get_strategy_options(risk):
     
@@ -107,10 +111,13 @@ def get_strategy_options(risk):
     return info[0], info[1], info[2], info[3], info[4], info[5]
     
     
-    
+# return the strategy description for display   
 def get_strategies_info(strategy):
     return strategies_info[strategy][0], strategies_info[strategy][1]
 
+
+# call functions to create comparison chart, portfolo value graph and return ROI for
+# investment strategy, portfolio without the strategy and S&P 500
 def get_performance_data(portfolio_class, strategy):
     file = f"performance_data_{strategy}_{portfolio_class}.csv"
     df = pd.read_csv(Path(f"./data/performance/{file}"),
@@ -122,6 +129,7 @@ def get_performance_data(portfolio_class, strategy):
     compare = make_comparison_graph(portfolio_class, df)
     
     return figure, roi, compare
+
 
 # creat graph showing total portfolio value over time
 def make_performance_graph(portfolio_class,df):
@@ -139,7 +147,8 @@ def make_performance_graph(portfolio_class,df):
 
     return fig0
 
-
+# graph comparison of strategy investment, portfolio performance with out
+# applying the strategy and the S&P 500
 def make_comparison_graph(portfolio_class, df):
     # market_data = pd.read_csv(Path(f"./data/at_market_data.csv"),
     #              index_col='index', parse_dates=True, infer_datetime_format=True)

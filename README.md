@@ -15,9 +15,6 @@ In this **second phase** of the project, the user has access to a new tool that 
 For this second Project, a full description of the analysis process and coding has been created in the [Data](https://github.com/tlchampion/mwp_algorithmic_trading/blob/main/data/README.md) and [Modeling](https://github.com/tlchampion/mwp_algorithmic_trading/blob/main/modeling/README.md) specific README files.
 
 And a more detailed presentation can be found [Here](./MyWealthPath_Project_2.pptx).  
-=======
-
-
 
 ---
 
@@ -44,6 +41,8 @@ Hyperparameter tuning of the TensorFlow models was accomplished using [KerasTune
 
 The contents of the repository should be placed into the desired folder on the users computer, being sure to maintain the directory structure. 
 
+The application was developed using python version 3.9.16. Other versions of python may work, but no guarantee is made. We suggest usinig a new virtual environment with the correct version of python.
+
 The following python packages must be installed to run the application locally:
 * pandas
 * panel
@@ -68,7 +67,7 @@ If you prefer using pip, the included requirements.txt file may be used to insta
 ```
 pip install -r requirements.txt
 ```
-### Data Refresh
+#### Data Persistence
 
 Rather than continually make API calls and perform calcuations when data only updates on an at most daily basis, the application relies on preprepared data and images. As such, it is recommended to refresh these data sets and images on a periodic basis,such as weekly or monthly, in order to present more current and relevant information.
 
@@ -79,6 +78,17 @@ python create_data_files.py
 ```
 
 Do the the volume of data and images being prepared, this process can take some time so please be patient when choosing to refresh.
+
+
+Do to the usage of joblib dump/load for the persistence of the models and some data you may encounter compatability issues, most especially if you are not using the recommended python version. If this is the case, you can recreate the machine learning models and then follow the above instructions for refreshing all data files.
+
+To recreate the machine learning models please run the save_best_models.py script found in the scripts folder.
+
+```
+python save_best_models.py
+```
+
+Alternatively, you may run the save_best_models.ipynb notebook in jupyter lab
 
 ---
 
@@ -163,8 +173,8 @@ ___
 
 Future work and/or enhancements to this project include:
 * Implementing a more robust Risk Analysis Survey
+* Revamp model training and evaluation to find better performing options
 * Adding in features to allow a user to fine-tuning their portfolio
-* Adding market information for the client
 * Improve visualizations
 * Enhance UI/UX
 * Add a blockchain contracts feature to onboard and sign-up the client

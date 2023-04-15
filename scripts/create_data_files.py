@@ -101,6 +101,8 @@ def add_signals(df):
     df.ta.log_return(cumulative=False, append=True)
     df.ta.percent_return(append=True, cumulative=True)
     df.ta.percent_return(append=True, cumulative=False)
+
+    # default is a 'sell' status for all signals
     df['performance_signal'] = 0
     df['SMA_signal'] = 0
     df['MACD_signal'] = 0
@@ -108,30 +110,42 @@ def add_signals(df):
     df['RSI_signal'] = 0
     df['STOCH_signal'] = 0
 
+    # if there is a positive percent return we flag a 'buy' status
+    # otherwise keep it a 'sell'
     for index, row in df.iterrows():
         if row['PCTRET_1'] >= 0:
             df.loc[index,'performance_signal'] = 1
-        # elif row['PCTRET_1'] < 0:
-        #     df.loc[index,'performance_signal'] = -1
+
         
         sma_position = 0
-        # create signal column based upon SMA 
-        if row['SMA_30'] >= row['SMA_100'] and sma_position != 1:
+        # create signal column based upon SMA
+        # buy if sma30 >= sma100, sell if SMA30 < SMA 100
+
+        # if row['SMA_30'] >= row['SMA_100'] and sma_position != 1:
+        #     df.loc[index,'SMA_signal'] = 1
+        #     sma_position = 1
+        # elif row['SMA_30'] < row['SMA_100'] and sma_position != 0:
+        #     df.loc[index,'SMA_signal'] = 0
+        #     sma_position = 0
+
+        if row['SMA_30'] >= row['SMA_100']:
             df.loc[index,'SMA_signal'] = 1
-            sma_position = 1
-        elif row['SMA_30'] < row['SMA_100'] and sma_position != 0:
+           
+        elif row['SMA_30'] < row['SMA_100']:
             df.loc[index,'SMA_signal'] = 0
-            sma_position = 0
+           
             
         # create signal column based upon MACD
+        # buy if MACD >= MACDs, sell if MACD < MACDs
         if row['MACD_12_26_9'] >= row['MACDs_12_26_9']:
             df.loc[index,'MACD_signal'] = 1
        
-        # if row['MACD_12_26_9'] < row['MACDs_12_26_9'] and macd_position != -1:
-        #     df.loc[index,'MACD_signal'] = -1
-        #     macd_position = -1
+    
             
         # create signal column based upon Bollinger Bands
+        # if closing price is <= lower bollinger band trigger a buy condition if not already in a buy condition
+        # if closing price is > lower bollinger band trigger a sell condition if not already in a sell condition
+        # otherwise no change in buy/sell condition
         bb_position = 0
         if row['close'] <=  row['BBL_20_2.0'] and bb_position != 1:
             df.loc[index,'BB_signal'] = 1
@@ -143,6 +157,9 @@ def add_signals(df):
             df.loc[index,'BB_signal'] = bb_position
         
         # generate RSI signal column
+        # if rsi <= 30 a buy condition is set unless already in a buy condition
+        # if rsi > 30 a sell condition is set unless already in a sell condition
+        # other wise no change to buy/sell condition
         rsi_position = 0
         if row['RSI_14'] <= 30 and rsi_position != 1:
             df.loc[index,'RSI_signal'] = 1
@@ -152,8 +169,12 @@ def add_signals(df):
             rsi_position = 0
         else: 
             df.loc[index,'RSI_signal'] = rsi_position 
-            
+        
+
         # generate STOCH signal
+        # if STOCHk < 20 a buy condition is triggered unless already in a buy condition
+        # if STOCHk > 80 a sell condition is triggered unless already in a sell condition
+        # otherwise no change in buy/sell condition
         stoch_position = 0
         if row['STOCHk_14_3_3'] < 20 and stoch_position != 1:
             df.loc[index, 'STOCH_signal'] = 1
@@ -189,18 +210,24 @@ def build_portfolio_signal_ml_df(name):
 # also add daily returns and cumulative returns for portfolio without factoring in buy/sell signals
 def calculate_daily_values(df, signal, initial_capital=default_initial_investment, share_size=500):
     
- 
+    # daily position in portfolio is determined by a base investment in the portfolio equal to
+    # that portfolios share size (X).
+    # if in a 'buy' status for that day the share size is doubled (position = 2X)
     df['Position'] = (share_size * df[signal]) + share_size
 
 
     # Determine the points in time where shares are bought or sold
+    # This is based upon the difference in positions between days
+    # first row always has an Entry/Exit equal to that day's position
     df['Entry/Exit Position'] = df['Position'].diff()
     df.loc[df.index[0],'Entry/Exit Position'] = df.loc[df.index[0],'Position']
 
-    # Multiply the close price by the number of shares held, or the Position
+    # Multiply the close price by the number of shares held, or the Position,
+    # to determine the value of the portfolio holdings
     df['Portfolio Holdings'] = df['close'] * df['Position']
 
     # Subtract the amount of either the cost or proceeds of the trade from the initial capital invested
+    # this indicates the amount left in the 'cash reserve'
     df['Portfolio Cash'] = initial_capital - (df['close'] * df['Entry/Exit Position']).cumsum()
 
     # Calculate the total portfolio value by adding the portfolio cash to the portfolio holdings (or investments)
@@ -213,9 +240,11 @@ def calculate_daily_values(df, signal, initial_capital=default_initial_investmen
     df['Portfolio Cumulative Returns'] = (1 + df['Portfolio Daily Returns']).cumprod() - 1
     
     # Calculate the daily returns for non-strategy trading
+    # this is based on the portfolios close price, not calcualted portfolo value
     df['Base Daily Returns'] = df['close'].pct_change()
     
     # Calculate the cumulative returns for non-strategy trading
+    # this is based on the portfolios close price, not calcualted portfolo value
     df['Base Cumulative Returns'] = (1 + df['Base Daily Returns']).cumprod() - 1
 
     # Calculate the daily returns for S&P 500
