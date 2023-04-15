@@ -6,13 +6,13 @@ The following process has been followed to test and select the most suitable Mod
 
 ## 1. Data Loading
 
-Prepared Train/Test datasets were loaded from saved files. Please see the [main section]() for details on the preparation of the datasets.
+Prepared Train/Test datasets were loaded from saved files. Please see the [Data Preparation README](../data/README.md) for details on the preparation of the datasets.
 
 
 
 ## 2. Model Training
 
-### Sci-Kit Learn Modeling
+### 2a. Sci-Kit Learn Modeling
 
 An initial set of Machine Learning models were built using six different packages from the Scikit-Learn library:
 
@@ -98,17 +98,17 @@ Each model class had a minimum of 10-plus models built using different parameter
 
 **SVM**     
 
-| model  | random_state | max_iter | kernel  | C   | probability |
-|:------:|:------------:|:--------:|:-------:|:---:|:-----------:|
-| model1 | 42           | 1000     | linear  | 0.5 | True        |
-| model2 | 42           | 1000     | linear  | 1   | True        |
-| model3 | 42           | 1000     | linear  | 10  | True        |
-| model4 | 42           | 1000     | rbf     | 0.5 | True        |
-| model5 | 42           | 1000     | rbf     | 1   | True        |
-| model6 | 42           | 1000     | rbf     | 10  | True        |
-| model7 | 42           | 1000     | sigmoid | 0.5 | True        |
-| model8 | 42           | 1000     | sigmoid | 1   | True        |
-| model9 | 42           | 1000     | sigmoid | 10  | True        |
+| model  | random_state | kernel  | C   | probability |
+|:------:|:------------:|:-------:|:---:|:-----------:|
+| model1 | 42           | linear  | 0.5 | True        |
+| model2 | 42           | linear  | 1   | True        |
+| model3 | 42           | linear  | 10  | True        |
+| model4 | 42           | rbf     | 0.5 | True        |
+| model5 | 42           | rbf     | 1   | True        |
+| model6 | 42           | rbf     | 10  | True        |
+| model7 | 42           | sigmoid | 0.5 | True        |
+| model8 | 42           | sigmoid | 1   | True        |
+| model9 | 42           | sigmoid | 10  | True        |
 
 
 
@@ -141,7 +141,7 @@ For each ML algorithm a loop structure was used to build/evaluate each of the 10
 * The evalution metric scores for all configurations of the model were combined into one dataframe
 
 
-### TensorFlow Modeling
+### 2b. TensorFlow Modeling
 
  A Deep Neural Network consisting of two Dense layers was designed with the intent of predicting portfolio performance. The following steps were involved in the training of the neural network. The steps were repeated twice, once for the full features dataset and once for the reduced features dataset:
 

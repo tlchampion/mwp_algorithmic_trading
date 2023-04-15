@@ -1,4 +1,6 @@
 
+
+
 # import modules
 import panel as pn
 pn.extension('tabulator')
@@ -18,9 +20,16 @@ import modules.HistoricalData as hst
 import modules.MCTab as MCTab
 import modules.intro as intro
 import modules.profile as prf
+import modules.AlgoTab as at
+import modules.algorithmic_functions as af
+
+from joblib import dump, load
 
 
 
+
+
+# initialize the dashboard framework
 
 template = FastListTemplate(title="MyWealthPath", header_background = 'blue')
 
@@ -77,7 +86,6 @@ header_box = pn.WidgetBox(text,width=300, height=75, align='center')
 
 # define a spacer element to seperate elements in sidebar
 spacer = pn.layout.Spacer(margin=10)
-
 
 
 
@@ -242,7 +250,125 @@ def main_display(_):
     # listener for button click    
 
     mc_button.on_click(change_pane)
+    
+    ######
+    # define contents for 'Alogrithmic Trading' tab
+    
+    at_intro = at.get_intro()
+    at_strategy_one, at_strategy_two, at_strategy_three, at_strategy_four, at_strategy_five, at_strategy_six = at.get_strategy_options(port_class_text)
+    at_info_pane = pn.Row(spacer)
+    at_graph_row1 = pn.Row(spacer)
+    at_graph_row2 = pn.Row(spacer)
+    # at_roi_info = pn.Row(spacer)
+    at_compare_row1 = pn.Row(spacer)
+    at_compare_row2 = pn.Row(spacer)
+    at_mc_row1 = pn.Row(spacer)
+    at_mc_row2 = pn.Row(spacer)
+    at_mc_row3 = pn.Row(spacer)
+    
+    # create dropdown selection and function to update tab display based upon selection
+    
+    
+    menu_items = [
+        (at_strategy_one[0],at_strategy_one[1]),
+        (at_strategy_two[0], at_strategy_two[1]),
+        (at_strategy_three[0], at_strategy_three[1]),
+        (at_strategy_four[0], at_strategy_four[1]),
+        (at_strategy_five[0], at_strategy_five[1]),
+        (at_strategy_six[0], at_strategy_six[1])
+                 ]
 
+    strategy_button = pn.widgets.MenuButton(name='Select Strategy', items=menu_items, button_type='primary')
+    
+    async def strategy_selected(event):
+        
+    
+        
+        # define the pane that provides information on the selected investment strategy
+        column_name, descr = at.get_strategies_info(event.new)
+        strategy_display_pane = pn.pane.HTML(descr,width=1000)
+        
+        # prepare the performance graphs for the assigned portfolio class
+        # and selected investment strategy
+        at_fig, at_rio, at_compare = at.get_performance_data(port_class_text, event.new)
+        
+        # define the pane that shows the portfolio's total value over time for the selected
+        # investment strategy
+        at_fig_descr = pn.pane.HTML(f"""<h2>Total Value of Portfolio Over Time</h2>The following graph shows the value of the {port_class_text.title()} following the selected investment
+        strategy over time, with and initial investment of $100,000 divided approximately equally between initial security purchase and cash reserves.""",
+                                   width=1000)
+        
+        at_fig_pane = pn.pane.Matplotlib(at_fig, dpi=144)
+        
+        
+        # define the pane that provides a graph showing the cumulative returns of the
+        # strategy, the S&P 500 and the portfolio without applying the investment strategy
+        at_compare_descr = pn.pane.HTML(f"""<h2>Comparison of Cumulative Returns Over Time</h2><p>The following graph shows a comparison of the cumulative daily returns for the {port_class_text} portfolio following the selected 
+        investment strategy for with that for the S&P 500 and for the same portfolio without applying the selected investment strategy.</p>
+        <p>As the graph illustrates, the ROI on the {port_class_text} class portfolio using the {event.new.upper()} strategy was {np.round(at_rio[0],2)}%. This compares to a ROI of 
+        {np.round(at_rio[1],2)}% for the portfolio if not implementing the selected strategy and a ROI of {np.round(at_rio[2],2)}% for the S&P 500, all for the same timeperiod.""", width=1000)
+        
+        at_compare_pane = pn.pane.Matplotlib(at_compare, dpi=144)
+        
+        # define the pane to textually compare the ROI for the portfolio following the investment strategy, 
+        # the S&P 500 and the portfolio without following the investment strategy
+        
+        # roi_statement = pn.pane.HTML(f"""The ROI on the {port_class_text} class portfolio using the {event.new.upper()} strategy was {np.round(at_rio[0],2)}%. This compares to a ROI of 
+        # {np.round(at_rio[1],2)}% for the portfolio if not implementing the selected strategy and a ROI of {np.round(at_rio[2],2)}% for the S&P 500, all for the same timeperiod.""",
+        #                             width=1000)
+        
+        
+
+        
+        
+        # display Monte Carlo simulation showing potential portfolio performance over the next 10 years
+        # MC simulations are done in advance and the results saved for display in order to 
+        # provide a responsive user experience.
+        filepath = Path(f"./MCdata/mcitems_{event.new}_{port_class_text}.joblib")
+        with open(filepath, 'rb') as file:
+            at_mc_items = load(file)
+        at_mc_intro = pn.pane.HTML(f"""<h2>Monte Carlo Simulations</h2><p>Below are the results of a Monte Carlo simulation based upon following the
+        selected investment strategy for the {port_class_text} portfolo showing potential returns over the next 10 years. Please refer to the 
+        'Future Performance' tab for a brief intro the a Monte Carlo simulation.</p>
+        <p>In summary, the Monte Carlo simulation indicates that {at_mc_items[1].lower()}""", width=1000)
+        at_simulation_plot = pn.pane.PNG(Path(f"./figures/simulation_{event.new}_{port_class_text}.png"))
+        at_distribution_plot = pn.pane.PNG(Path(f"./figures/distribution_{event.new}_{port_class_text}.png"))
+      
+        # at_mc_statement =pn.pane.HTML(f""" {at_mc_items[1]}""")
+        
+        # refresh contents of the tab based upon strategy selection from the dropdown menu
+        at_mc_row1.clear()
+        at_mc_row2.clear()
+        at_mc_row3.clear()
+        at_compare_row1.clear()
+        at_compare_row2.clear()
+        at_info_pane.clear()
+        at_graph_row1.clear()
+        at_graph_row2.clear()
+        # at_roi_info.clear()
+        at_info_pane.append(strategy_display_pane)
+        at_graph_row1.append(at_fig_descr)
+        at_graph_row2.append(at_fig_pane)
+        # at_roi_info.append(roi_statement)
+        at_compare_row1.append(at_compare_descr)
+        at_compare_row2.append(at_compare_pane)
+        at_mc_row1.append(at_mc_intro)
+        at_mc_row2.append(at_simulation_plot)
+        at_mc_row3.append(at_distribution_plot)
+        # at_mc_row.append(at_mc_statement)
+    
+    # listen for menu selection
+    strategy_button.on_click(strategy_selected)
+    
+
+
+    
+    
+    
+    # setup static pane information for display
+    at_intro_pane =  pn.pane.HTML(at_intro, width=900)
+   
+    
     #######
     
     # returning panel components defined above to main script for appending to dashboard
@@ -263,7 +389,16 @@ def main_display(_):
                                                         pn.Row(mc_button),
                                                         pn.Row(mc_column), 
                                                         pn.Row(mc_row2),
-                                                       pn.Row(mc_footer)))
+                                                       pn.Row(mc_footer))),
+                   ("Alogrithmic Trading", pn.Column(pn.Row(at_intro_pane),
+                                                    pn.Row(strategy_button),
+                                                    pn.Row(at_info_pane),
+                                                    pn.Row(pn.Column(at_graph_row1,at_graph_row2)),
+                                                    # pn.Row(at_roi_info),
+                                                    pn.Row(pn.Column(at_compare_row1, at_compare_row2)),
+                                                    pn.Row(at_mc_row1),
+                                                    pn.Row(at_mc_row2),
+                                                    pn.Row(at_mc_row3)))
                    
                 
                   )
@@ -279,11 +414,16 @@ template.main.append(main_display)
 
 
 
-
 # displaying dashboard
-# if dashboard is being served through a servise this needs to be updated to .servicable() rather than .show()
 
-template.servable()
+
+template.show()
+
+
+
+
+
+
 
 
 

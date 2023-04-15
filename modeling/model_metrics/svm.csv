@@ -1,11 +1,11 @@
 type,level_1,model3
 aggressive,f1_score,0.6961038961038961
-aggressive,roc_auc_score,0.49317514989156774
+aggressive,roc_auc_score,0.504209720627631
 alternative,f1_score,0.6961038961038961
-alternative,roc_auc_score,0.5400561296083685
+alternative,roc_auc_score,0.5343156014797806
 balanced,f1_score,0.699228791773779
-balanced,roc_auc_score,0.44224484665661135
+balanced,roc_auc_score,0.46260683760683763
 conservative,f1_score,0.6613756613756613
-conservative,roc_auc_score,0.49024999999999996
+conservative,roc_auc_score,0.5066875
 growth,f1_score,0.699481865284974
-growth,roc_auc_score,0.4876117496807152
+growth,roc_auc_score,0.47956577266922096
