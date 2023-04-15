@@ -2,24 +2,21 @@
 
 The following process was completed once for each of the five portfolio classes:
 
-* Historical **Data collection** (5y, from Yahoo Finance API)
-* Creation of a range of **trading indicators** (SMA, EMA, MACD, BBANDS, RSI, STOCH) to build the Trading Models.
-* Creation of **trading models** with their specific buy/sell signals.
-* **Signal Performance Pathway**: Backtesting of performance of the Portfolio vs the Portfolio enhanced by the trading strategy of choice and vs a Market Benchmark (S&P500).
-* **Machine Learning Pathway**: Training and testing of all the Portfolios with 6 different Model algorithms and 11 variations within each Model. Selection of the best performing one for each Portfolio to show the client.
 
-The trading strategy of choice and the predictions by the best performing Model will be displayed for the client in a new tab (**"Algorithmic Trading"**) on MyWealthPath's Platform.
 
----
+**1. Data Collection and Initial Processing**
 
-## Analysis Detail
-
-**1. Data Collection**
-
-* Used 5yfinance API to pull historical data on stocks for each of the five portfolio classes from 12/31/2017 forward.
+* Used yahoo finance API to pull historical data on stocks in portfolio from 12/31/2017 forward.
 * Combined Open/Close/High/Low/Volume data for individual stocks into one ```OCHLV dataset```, scaling each stock's contribution based on its weight in the portfolio.
 * Added a ```performance signal``` column indicating buy or sell condition for each day based on closing price.
-* Added various indicators using ```python-ta library```: SMA (30, 100, 200), EMA (50), MACD (12/26/9), BBANDS (20/2.0), RSI (14), HLC3, OHLC4, LINREG (14), and STOCH (14/3/3).
+* Added a collection of indicators using ```pandas-ta``` library: SMA (30, 100, 200), EMA (50), MACD (12/26/9), BBANDS (20/2.0), RSI (14), HLC3, OHLC4, LINREG (14), and STOCH (14/3/3).
+
+
+At this point the process was dependent on if a markent indicator was determining the buy/sell signals or if a machine learning model was
+
+
+**2a. Market Indicator Strategy Pathway**
+
 * Converted indicators into Buy/Sell signals based on the following designed strategies:
 
 | Indicator |       Buy       |      Sell      |
@@ -30,11 +27,30 @@ The trading strategy of choice and the predictions by the best performing Model 
 | RSI       | RSI <= 30       | RSI >= 70      |
 | STOCH     | STOCHk < 20     | STOCHk > 80    |
 
+* Continued with Step 3 below
 
-**2. Signal Performance Pathway**
 
-* Added a ```Position``` column indicating the number of shares owned in the portfolio, determined by share size times the strategy signal (share size varied between portfolio classes).
-* Added an ```Entry/Exit Position``` column as the difference between current and previous position values, except for the first row.
+**2b. Machine Learning Strategy Pathway**
+
+
+* Dropped unnecessary columns from data, retaining performance signal and indicator values only (not the buy/sell signals from the indicators).
+* Created ```feature dataset``` by dropping the buy/sell performance indicator.
+* Shifted ```feature dataset``` by one time period so that today's performance is used to determine tomorrow's buy/sell action.
+* Created ```target dataset``` using the buy/sell performance indicator.
+* Created ```train/test datasets``` . The first 24 months of data were used for the training dataset, the folloiwing 12 months for the test dataset. The remainder was reserved for making model-based predictions.
+* Created two ```final X (feature) datasets``` with different contents: full set of 18 features and reduced set with only SMA200, EMA50, and the five Bollinger Band indicators.
+* Saved train/test datasets for use in modeling process
+* After completion of the model training and evaluation process, the optimal model per portfolio was used to make predictions using the final third of the original dataset
+* Model predictions were combined onto a copy of the portfolios historical price data from step 1 above. The predictions became the Buy/Sell signal.
+Continued with Step 3 below
+
+
+**3. Investment Strategy Perfomance Data**
+
+Performance backtesting for the investment stratgies followed the following steps:
+
+* Added a ```Position``` column indicating the number of shares owned in the portfolio, determined by share size times the strategy buy/sell signal. Share size varied between portfolio classes.
+* Added an ```Entry/Exit Position``` column as the difference between current and previous position values, except for the first row which was equal to the position value.
 * Added ```Portfolio Holdings``` as the product of number of shares held and closing price.
 * Added ```Portfolio Cash``` as the initial capital invested minus cash used to buy shares plus proceeds of selling shares.
 * Added ```Portfolio Total``` as the sum of 'Portfolio Holdings' and 'Portfolio Cash'.
@@ -44,51 +60,7 @@ The trading strategy of choice and the predictions by the best performing Model 
 * Saved compiled data for use in dashboard application.
 
 
-**3. Machine Learning Pathway**
 
-* Dropped unnecessary columns from data, retaining performance signal and indicators.
-* Created ```feature dataset``` by dropping the buy/sell performance indicator.
-* Shifted ```feature dataset``` by one time period so that today's performance is used to determine tomorrow's buy/sell action.
-* Created ```target dataset``` using the buy/sell performance indicator.
-* Created ```train/test datasets``` by splitting data based on a 36-month window, reserving early dates for Train and late dates for Test datasets.
-* Created two ```final X (feature) datasets``` with different contents: full set of features and reduced set with only SMA200, EMA50, and the five Bollinger Band indicators.
-* Saved train/test datasets for use in modeling process.
 
-**4. Dashboard Performance Data**
-
-(To be displayed to the User)
-
-* Generate prediction datasets for each portfolio class (ie. Conservative, Growth, etc) by following the same steps as for model training data, using a beginning date of January 10, 2022.
-* Make predictions for each portfolio class using the saved model for that class (the best performing model for each class).
-* Concatenate/combine predictions with portfolio's performance data, which was compiled earlier in the process as stated above.
-* Process and plot the combined dataframe for the User.
-
----
-
-## Contributors
-
-[Ahmad Takatkah](https://github.com/vcpreneur)
-[Lourdes Dominguez Bengoa](https://github.com/LourdesDB)
-[Patricio Gomez](https://github.com/patogogo)
-[Lovedeep Singh](https://github.com/LovedeepSingh89)
-[Thomas L. Champion](https://github.com/tlchampion)
-
----
-
-## License
-
-License information can be found in the included LICENSE file.
-
----
-## Credits
-* Code for generating the Monte Carlo Simulation was modified from code provided by UC Berkeley Extension FinTech Bootcamp
-
----
-
-## Disclaimer
-
-The information provided through this application is for information and educational purposes only. 
-It is not intended to be, nor should it be used as, investment advice. 
-Seek a duly licensed professional for investment advice.
 
 

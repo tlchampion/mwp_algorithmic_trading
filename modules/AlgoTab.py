@@ -141,8 +141,8 @@ def make_performance_graph(portfolio_class,df):
 
 
 def make_comparison_graph(portfolio_class, df):
-    market_data = pd.read_csv(Path(f"./data/at_market_data.csv"),
-                 index_col='index', parse_dates=True, infer_datetime_format=True)
+    # market_data = pd.read_csv(Path(f"./data/at_market_data.csv"),
+    #              index_col='index', parse_dates=True, infer_datetime_format=True)
     text = f"{portfolio_class.capitalize()} Portfolio (Strategy)"
     text2 = f"{portfolio_class.capitalize()} Portfolio (No Strategy)"
     title = f"{portfolio_class.capitalize()} Portfolio Cumulative Returns vs S&P 500"
@@ -151,7 +151,8 @@ def make_comparison_graph(portfolio_class, df):
     #ax = port_cum_returns.plot(figsize=(10,5), title="Cumulative Returns of Conservative Portfolio vs S&P 500")
     #gmarket_cum_returns.plot(ax=ax)
     chart = ax.plot(df['Portfolio Cumulative Returns'])
-    ax.plot(market_data['market_cum_returns'])
+    # ax.plot(market_data['market_cum_returns'])
+    ax.plot(df['Market Cumulative Returns'])
     ax.plot(df['Base Cumulative Returns'])
     ax.set_title(title)
     ax.legend([text,
@@ -163,12 +164,12 @@ def make_comparison_graph(portfolio_class, df):
 
 # calculate ROI for portfolio
 def calculate_roi(df): 
-    market_data = pd.read_csv(Path(f"./data/at_market_data.csv"),
-                 index_col='index', parse_dates=True, infer_datetime_format=True)
+    # market_data = pd.read_csv(Path(f"./data/at_market_data.csv"),
+    #              index_col='index', parse_dates=True, infer_datetime_format=True)
     # roi_strategy = (data.iloc[-1,:]['Portfolio Total'] - initial_investment) / initial_investment * 100
     roi_strategy = df.iloc[-1,]['Portfolio Cumulative Returns'] * 100
     roi_nostrategy = df.iloc[-1,]['Base Cumulative Returns'] * 100
-    roi_market = market_data.iloc[-1,]['market_cum_returns'] * 100
+    roi_market = df.iloc[-1,]['Market Cumulative Returns'] * 100
     return [roi_strategy, roi_nostrategy, roi_market]
     
     
